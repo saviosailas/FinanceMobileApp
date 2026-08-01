@@ -1,0 +1,4 @@
+# Skip configuration for FinanceTrackerTests module
+
+#build:
+#  contents:

@@ -3,7 +3,7 @@
 Android application to track the personal finance. Project build using multi platform framework [Skip](https://skip.dev).
 
 <details><summary>Q. Why Skip framework?</summary>
-I am familiar with iOS app development using Swift, so I will choose the path of least resistance.
+I am familiar with iOS app development using Swift, so I choose the path of least resistance.
 </details>
 
 
