@@ -1,5 +1,7 @@
 # FinanceTracker
 
+<img src="Android/app/src/main/res/play_store_512.png" width="120">
+
 Android application to track the personal finance. Project build using multi platform framework [Skip](https://skip.dev).
 
 <details><summary>Q. Why Skip framework?</summary>
