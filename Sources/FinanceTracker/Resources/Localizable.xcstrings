@@ -1,8 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Balance" : {
+
+    },
     "Finance" : {
       "comment" : "Navigation titile",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18,7 +22,19 @@
         }
       }
     },
+    "Good morning" : {
+
+    },
+    "Hi" : {
+
+    },
+    "Income this month" : {
+
+    },
     "Settings" : {
+
+    },
+    "Spend this month" : {
 
     }
   },

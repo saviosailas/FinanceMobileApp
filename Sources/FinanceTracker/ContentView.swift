@@ -7,6 +7,10 @@ struct ContentView: View {
     var body: some View {
         ScrollView(.vertical, content: {
             HeaderView(action: {})
+            StatusCardView()
+                .padding(.top, 20.0)
+            
+            
         })
     }
 }

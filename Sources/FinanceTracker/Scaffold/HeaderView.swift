@@ -9,14 +9,30 @@ import SwiftUI
 
 struct HeaderView: View {
     
+//    @AppStorage var userName: String = "Savio"
+    
     let action: (() -> Void)?
     
     var body: some View {
         HStack(alignment: .firstTextBaseline, content: {
-            Text("Finance")
-                .font(.largeTitle)
-                .bold()
-                .foregroundStyle(Color("TitleColor", bundle: .module))
+            VStack(alignment: .leading, content: {
+                HStack(alignment: .center, content: {
+                    Text("Hi")
+                        .font(.title)
+                        .bold()
+                        .foregroundStyle(Color.red)
+                    Text(verbatim: "Savio")
+                        .font(.title)
+                        .bold()
+                        .foregroundStyle(Color.gray)
+                        .foregroundStyle(Color("TitleColor", bundle: .module))
+                })
+                
+                Text("Good morning")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.secondary)
+            })
+            
             Spacer()
             
             Button(action: {
@@ -44,6 +60,9 @@ struct HeaderView: View {
 
 #if !SKIP
 #Preview {
-    HeaderView(action: nil)
+    VStack(alignment: .center, content: {
+        HeaderView(action: nil)
+        Spacer()
+    })
 }
 #endif
