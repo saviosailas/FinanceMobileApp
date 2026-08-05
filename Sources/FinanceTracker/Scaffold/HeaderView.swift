@@ -35,24 +35,24 @@ struct HeaderView: View {
             
             Spacer()
             
-            Button(action: {
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                action?()
-            },
-            label: {
-                Image("settings", bundle: .module, label: Text("Settings"))
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 34)
-            })
-            .clipShape(Circle())
-            #if SKIP
-            .material3Ripple { options in
-                let updatedOption = options ?? Material3RippleOptions()
-                updatedOption.color = androidx.compose.ui.graphics.Color(color = 0xFFFF0000)
-                return updatedOption
-            }
-            #endif
+//            Button(action: {
+//                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+//                action?()
+//            },
+//            label: {
+//                Image("settings", bundle: .module, label: Text("Settings"))
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fit)
+//                    .frame(width: 34)
+//            })
+//            .clipShape(Circle())
+//            #if SKIP
+//            .material3Ripple { options in
+//                let updatedOption = options ?? Material3RippleOptions()
+//                updatedOption.color = androidx.compose.ui.graphics.Color(color = 0xFFFF0000)
+//                return updatedOption
+//            }
+//            #endif
         })
         .padding([.horizontal, .top])
     }

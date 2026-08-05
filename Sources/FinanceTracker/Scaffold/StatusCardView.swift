@@ -22,11 +22,10 @@ struct StatusCardView: View {
                     .font(.caption)
                     .foregroundStyle(Color("textSecondary", bundle: .module))
                 
-                // Expanse / income info
+                // Expense / income info
                 
                 DisclosureGroup(isExpanded: $isExpanded, content: {
                     VStack(alignment: .leading, spacing: 5.0, content: {
-                        Divider()
 
                         HStack(alignment: .center, content: {
                             Text("Spend this month")
@@ -36,7 +35,6 @@ struct StatusCardView: View {
                             Text(verbatim: "5,024")
                         })
                         
-                        
                         HStack(alignment: .center, content: {
                             Text("Income this month")
                                 .font(.callout)
@@ -44,11 +42,11 @@ struct StatusCardView: View {
                             Spacer()
                             Text(verbatim: "54,000")
                         })
-                        
                     })
                 }, label: {
                     EmptyView()
                 })
+                .disabled(true)
                 .labelsHidden()
 
             })
@@ -58,12 +56,17 @@ struct StatusCardView: View {
         })
         .padding(10)
         .background(content: {
-//            Color("TitleColor", bundle: .module).opacity(0.6)
-//                .clipShape(RoundedRectangle(cornerRadius: 12.0))
-            Color("primaryBG", bundle: .module).clipShape(RoundedRectangle(cornerRadius: 12.0))
-                .overlay(Color.red.opacity(0.7), in: RoundedRectangle(cornerRadius: 12.0).inset(by: -2).stroke(lineWidth: 1))
+            Color("primaryBG", bundle: .module)
+                .clipShape(RoundedRectangle(cornerRadius: 12.0))
         })
-//        .contentShape(RoundedRectangle(cornerRadius: 12.0))
+        
+        .overlay(
+            RoundedRectangle(cornerRadius: 12.0)
+                .inset(by: -2)
+                .stroke(Color.orange, lineWidth: 1)
+            ,
+            alignment: .center)
+        		
         .allowsHitTesting(true)
         .onTapGesture {
             isExpanded.toggle()
