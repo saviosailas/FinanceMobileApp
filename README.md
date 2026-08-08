@@ -4,7 +4,7 @@
 
 Android application to track the personal finance. Project build using multi platform framework [Skip](https://skip.dev).
 
-<details><summary>Q. Why Skip framework?</summary>
+<details><summary>Q. Why Skip framework for Android app?</summary>
 I am familiar with iOS app development using Swift, so I choose the path of least resistance.
 </details>
 
