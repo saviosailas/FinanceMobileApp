@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,14 +17,12 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		499CD44A2AC5B9C6001AE8D8 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolder = Frameworks;
 			files = (
 				491F27832DA55B72004926EE /* FinanceTracker in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -46,11 +44,9 @@
 /* Begin PBXFrameworksBuildPhase section */
 		499CD43C2AC5B799001AE8D8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				491F27822DA55B72004926EE /* FinanceTracker in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -112,8 +108,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			name = "FinanceTracker App";
 			packageProductDependencies = (
 				491F27812DA55B72004926EE /* FinanceTracker */,
@@ -131,9 +125,9 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
 				LastUpgradeCheck = 1630;
+				ORGANIZATIONNAME = "Savio Sailas";
 			};
 			buildConfigurationList = 49F90C232A52156200F06D93 /* Build configuration list for PBXProject "FinanceTracker" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -144,6 +138,7 @@
 			mainGroup = 49F90C1F2A52156200F06D93;
 			packageReferences = (
 			);
+			preferredProjectObjectVersion = 90;
 			productRefGroup = 496BDBEC2B89A47800C09264 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -156,12 +151,10 @@
 /* Begin PBXResourcesBuildPhase section */
 		499CD43E2AC5B799001AE8D8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				499CD4402AC5B799001AE8D8 /* Assets.xcassets in Resources */,
 				496BDBEE2B8A7E9C00C09264 /* Localizable.xcstrings in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
@@ -169,37 +162,43 @@
 		499CD4452AC5B869001AE8D8 /* Run skip gradle */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
 			name = "Run skip gradle";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/bin/sh -e";
-			shellScript = "if [ \"${SKIP_ZERO}\" != \"\" ]; then\n  echo \"note: skipping skip due to SKIP_ZERO\"\n  exit 0\nelif [ \"${ENABLE_PREVIEWS}\" = \"YES\" ]; then\n  echo \"note: skipping skip due to ENABLE_PREVIEWS\"\n  exit 0\nelif [ \"${ACTION}\" = \"install\" ]; then\n  echo \"note: skipping skip due to archive install\"\n  exit 0\nelif [ \"${SKIP_ACTION}\" = \"none\" ]; then\n  echo \"note: skipping skip due to SKIP_ACTION none\"\n  exit 0\nelse\n  SKIP_ACTION=\"${SKIP_ACTION:-launch}\"\nfi\nPATH=${BUILD_ROOT}/Release:${BUILD_ROOT}/Debug:${BUILD_ROOT}/../../SourcePackages/artifacts/skip/skip/skip.artifactbundle/macos:${PATH}:${HOMEBREW_PREFIX:-/opt/homebrew}/bin\necho \"note: running gradle build with: $(which skip) gradle -p ${PWD}/../Android ${SKIP_ACTION:-launch}${CONFIGURATION:-Debug}\"\nskip gradle -p ../Android ${SKIP_ACTION:-launch}${CONFIGURATION:-Debug}\n";
+			shellScript = (
+				"if [ \"${SKIP_ZERO}\" != \"\" ]; then",
+				"  echo \"note: skipping skip due to SKIP_ZERO\"",
+				"  exit 0",
+				"elif [ \"${ENABLE_PREVIEWS}\" = \"YES\" ]; then",
+				"  echo \"note: skipping skip due to ENABLE_PREVIEWS\"",
+				"  exit 0",
+				"elif [ \"${ACTION}\" = \"install\" ]; then",
+				"  echo \"note: skipping skip due to archive install\"",
+				"  exit 0",
+				"elif [ \"${SKIP_ACTION}\" = \"none\" ]; then",
+				"  echo \"note: skipping skip due to SKIP_ACTION none\"",
+				"  exit 0",
+				"else",
+				"  SKIP_ACTION=\"${SKIP_ACTION:-launch}\"",
+				"fi",
+				"PATH=${BUILD_ROOT}/Release:${BUILD_ROOT}/Debug:${BUILD_ROOT}/../../SourcePackages/artifacts/skip/skip/skip.artifactbundle/macos:${PATH}:${HOMEBREW_PREFIX:-/opt/homebrew}/bin",
+				"echo \"note: running gradle build with: $(which skip) gradle -p ${PWD}/../Android ${SKIP_ACTION:-launch}${CONFIGURATION:-Debug}\"",
+				"skip gradle -p ../Android ${SKIP_ACTION:-launch}${CONFIGURATION:-Debug}",
+				"",
+			);
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		499CD43A2AC5B799001AE8D8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				499CD43B2AC5B799001AE8D8 /* Main.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		499CD4422AC5B799001AE8D8 /* Debug */ = {
+		499CD4422AC5B799001AE8D8 /* Debug configuration for PBXNativeTarget "FinanceTracker App" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 496EB72F2A6AE4DE00C1253B /* FinanceTracker.xcconfig */;
 			buildSettings = {
@@ -209,7 +208,7 @@
 			};
 			name = Debug;
 		};
-		499CD4432AC5B799001AE8D8 /* Release */ = {
+		499CD4432AC5B799001AE8D8 /* Release configuration for PBXNativeTarget "FinanceTracker App" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 496EB72F2A6AE4DE00C1253B /* FinanceTracker.xcconfig */;
 			buildSettings = {
@@ -219,7 +218,7 @@
 			};
 			name = Release;
 		};
-		49F90C4B2A52156300F06D93 /* Debug */ = {
+		49F90C4B2A52156300F06D93 /* Debug configuration for PBXProject "FinanceTracker" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -239,7 +238,7 @@
 			};
 			name = Debug;
 		};
-		49F90C4C2A52156300F06D93 /* Release */ = {
+		49F90C4C2A52156300F06D93 /* Release configuration for PBXProject "FinanceTracker" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -263,19 +262,17 @@
 		499CD4412AC5B799001AE8D8 /* Build configuration list for PBXNativeTarget "FinanceTracker App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				499CD4422AC5B799001AE8D8 /* Debug */,
-				499CD4432AC5B799001AE8D8 /* Release */,
+				499CD4422AC5B799001AE8D8 /* Debug configuration for PBXNativeTarget "FinanceTracker App" */,
+				499CD4432AC5B799001AE8D8 /* Release configuration for PBXNativeTarget "FinanceTracker App" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		49F90C232A52156200F06D93 /* Build configuration list for PBXProject "FinanceTracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				49F90C4B2A52156300F06D93 /* Debug */,
-				49F90C4C2A52156300F06D93 /* Release */,
+				49F90C4B2A52156300F06D93 /* Debug configuration for PBXProject "FinanceTracker" */,
+				49F90C4C2A52156300F06D93 /* Release configuration for PBXProject "FinanceTracker" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */

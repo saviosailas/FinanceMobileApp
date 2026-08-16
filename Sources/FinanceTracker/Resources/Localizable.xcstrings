@@ -4,21 +4,6 @@
     "" : {
 
     },
-    "(-)" : {
-
-    },
-    "3: 13 pm" : {
-
-    },
-    "10,000" : {
-
-    },
-    "12 July 2026" : {
-
-    },
-    "Balance" : {
-
-    },
     "Finance" : {
       "comment" : "Navigation titile",
       "extractionState" : "stale",
@@ -37,24 +22,6 @@
         }
       }
     },
-    "Food" : {
-
-    },
-    "Good morning" : {
-
-    },
-    "Hi" : {
-
-    },
-    "Income this month" : {
-
-    },
-    "Spend this month" : {
-
-    },
-    "Transactions" : {
-
-    }
   },
   "version" : "1.0"
 }

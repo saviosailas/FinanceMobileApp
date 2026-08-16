@@ -2,41 +2,46 @@
 //  DebitListView.swift
 //  FinanceMobileApp
 //
-//  Created by user on 08/08/26.
+//  Created by Savio Sailas on 08/08/26.
 //
 
 import SwiftUI
 
-struct DebitListView: View {
+struct TransactionItemView: View {
     
-    @State var showDetails: Bool = true
+    @State var showDetails: Bool = false
+    let vm: TransactionItemViewModel
+    
     var body: some View {
         VStack(alignment: .listRowSeparatorLeading, spacing: 0.0, content: {
             
-            
             HStack(alignment: .center, spacing: 0.0, content: {
-                Text("10,000")
+                
+                Text(verbatim: vm.transactionIcon)
+                    .font(.caption)
+                    .foregroundStyle(vm.iconColor)
+                    .padding(.trailing, 1.5)
+                
+                Text(verbatim: vm.displayAmount)
                     .font(.title2)
-                    .foregroundStyle(Color.primary)
+                    .foregroundStyle(Color("textPrimary", bundle: .module))
                 Spacer()
-                Text("Food")
+                Text(vm.name)
                     .font(.callout)
-                    .foregroundStyle(Color.primary)
+                    .foregroundStyle(Color("textPrimary", bundle: .module))
             })
 
             
             
             HStack(alignment: .bottom, spacing: 0.0, content: {
                 
-                Text("(-)")
-                    .font(.caption2)
-                    .foregroundStyle(Color.red)
+                Text(verbatim: "")
                 
                 Spacer()
                 
-                Text("12 July 2026")
+                Text(verbatim: vm.date)
                     .font(.caption2)
-                    .foregroundStyle(Color.gray)
+                    .foregroundStyle(Color("textSecondary", bundle: .module))
             })
             
             if showDetails {
@@ -46,9 +51,9 @@ struct DebitListView: View {
                     
                     Spacer()
                     
-                    Text("3: 13 pm")
+                    Text(vm.time)
                         .font(.caption2)
-                        .foregroundStyle(Color.black)
+                        .foregroundStyle(Color("textPrimary", bundle: .module))
                 })
             }
             
@@ -56,11 +61,16 @@ struct DebitListView: View {
         })
         .frame(minHeight: 70.0)
         .padding(.horizontal, 10.0)
+        .background(content: {
+            Color("primaryBG", bundle: .module)
+                .clipShape(RoundedRectangle(cornerRadius: 12.0))
+        })
         .overlay(alignment: .center, content: {
             RoundedRectangle(cornerRadius: 12.0)
                 .stroke(Color.gray, lineWidth: 0.1)
                 .shadow(radius: 12.0)
         })
+        .allowsHitTesting(true)
         .onTapGesture {
             showDetails.toggle()
         }
@@ -71,6 +81,9 @@ struct DebitListView: View {
 
 #Preview {
     List(1...5, id: \.self) { _ in
-        DebitListView()
+        TransactionItemView(vm: TransactionItemViewModel(
+            type: .debit, name: "Food",
+            date: "12 July 2026", time: "3.30 pm", amount: 10.0)
+        )
     }
 }

@@ -2,7 +2,7 @@
 //  SwiftUIView.swift
 //  FinanceMobileApp
 //
-//  Created by user on 01/08/26.
+//  Created by Savio Sailas on 01/08/26.
 //
 
 import SwiftUI
@@ -25,7 +25,7 @@ struct HeaderView: View {
                         .font(.title)
                         .bold()
                         .foregroundStyle(Color.gray)
-                        .foregroundStyle(Color("TitleColor", bundle: .module))
+                        .foregroundStyle(Color("titleColor", bundle: .module))
                 })
                 
                 Text("Good morning")
