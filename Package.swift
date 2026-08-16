@@ -11,16 +11,38 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://source.skip.tools/skip.git", from: "1.9.5"),
-        .package(url: "https://source.skip.tools/skip-ui.git", from: "1.0.0")
+        .package(url: "https://source.skip.tools/skip-ui.git", from: "1.0.0"),
+        .package(url: "https://github.com/skiptools/skip-sql.git", from: "0.16.0")
     ],
     targets: [
-        .target(name: "FinanceTracker", dependencies: [
-            .product(name: "SkipUI", package: "skip-ui")
-        ], resources: [.process("Resources")], plugins: [.plugin(name: "skipstone", package: "skip")]),
-        .testTarget(name: "FinanceTrackerTests", dependencies: [
-            "FinanceTracker",
-            .product(name: "SkipTest", package: "skip")
-        ], resources: [.process("Resources")], plugins: [.plugin(name: "skipstone", package: "skip")]),
+        .target(
+            name: "FinanceTracker",
+            dependencies: [
+                .product(name: "SkipUI", package: "skip-ui"),
+                .product(name: "SkipSQL", package: "skip-sql")
+            ],
+            resources: [.process("Resources")],
+            plugins: [.plugin(
+                name: "skipstone",
+                package: "skip"
+            )]
+               ),
+        
+        .testTarget(
+            name: "FinanceTrackerTests",
+            dependencies: [
+                "FinanceTracker",
+                .product(
+                    name: "SkipTest",
+                    package: "skip"
+                )
+            ],
+            resources: [.process("Resources")],
+            plugins: [.plugin(
+                name: "skipstone",
+                package: "skip"
+            )]
+        ),
     ]
 )
 
@@ -35,7 +57,7 @@ if Context.environment["SKIP_ZERO"] ?? "0" != "0" {
                 return false
             }
         })
-
+        
         // remove the Skip target dependencies
         target.dependencies.removeAll(where: { dependency in
             if case .productItem(_, let package, _, _) = dependency {
@@ -45,7 +67,7 @@ if Context.environment["SKIP_ZERO"] ?? "0" != "0" {
             }
         })
     }
-
+    
     // remove the Skip package dependencies
     package.dependencies.removeAll(where: { dependency in
         if case .sourceControl(_, let url, _) = dependency.kind {

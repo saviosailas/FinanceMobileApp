@@ -4,6 +4,24 @@
     "" : {
 
     },
+    "Amount" : {
+
+    },
+    "Ant prompt" : {
+
+    },
+    "Balance" : {
+
+    },
+    "Category" : {
+
+    },
+    "Credit" : {
+
+    },
+    "Debit" : {
+
+    },
     "Finance" : {
       "comment" : "Navigation titile",
       "extractionState" : "stale",
@@ -22,6 +40,24 @@
         }
       }
     },
+    "Good morning" : {
+
+    },
+    "Hi" : {
+
+    },
+    "History view" : {
+
+    },
+    "Income this month" : {
+
+    },
+    "No transactions" : {
+
+    },
+    "Spend this month" : {
+
+    }
   },
   "version" : "1.0"
 }
