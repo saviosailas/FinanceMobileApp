@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-struct HeaderView: View {
+struct GreetingsView: View {
     
-//    @AppStorage var userName: String = "Savio"
+    @AppStorage("username") var userName: String = ""
+    @State private var timeOfDay: String = ""
     
     let action: (() -> Void)?
     
@@ -21,14 +22,14 @@ struct HeaderView: View {
                         .font(.title)
                         .bold()
                         .foregroundStyle(Color.red)
-                    Text(verbatim: "Savio")
+                    Text(verbatim: userName)
                         .font(.title)
                         .bold()
                         .foregroundStyle(Color.gray)
                         .foregroundStyle(Color("TitleColor", bundle: .module))
                 })
                 
-                Text("Good morning")
+                Text(timeOfDay)
                     .font(.subheadline)
                     .foregroundStyle(Color.secondary)
             })
@@ -55,13 +56,29 @@ struct HeaderView: View {
 //            #endif
         })
         .padding([.horizontal, .top])
+        .onAppear {
+            updateTimeOfDay()
+        }
     }
+    
+    private func updateTimeOfDay() {
+            let hour = Calendar.current.component(.hour, from: Date())
+            switch hour {
+            case 0..<12:
+                timeOfDay = "Good morning"
+            case 12..<17:
+                timeOfDay = "Good afternoon"
+            default:
+                timeOfDay = "Good evening"
+            }
+        }
+    
 }
 
 #if !SKIP
 #Preview {
     VStack(alignment: .center, content: {
-        HeaderView(action: nil)
+        GreetingsView(action: nil)
         Spacer()
     })
 }

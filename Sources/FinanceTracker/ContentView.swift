@@ -6,9 +6,32 @@ struct ContentView: View {
 
     var body: some View {
         ScrollView(.vertical, content: {
-            HeaderView(action: {})
-            StatusCardView()
+            GreetingsView(action: {})
+            FinanceStatusCardView()
                 .padding(.top, 20.0)
+            
+            HStack(alignment: .center) {
+                Spacer()
+                Button(action: {
+                    
+                }) {
+                    Text("Add transaction")
+                        .font(.title3)
+                        .foregroundStyle(Color("textPrimary", bundle: .module))
+                        .padding(7.0)
+                        .background(
+                            Color("titleColor", bundle: .module).opacity(0.9)
+                                .clipShape(
+                                    UnevenRoundedRectangle(cornerRadii: .init(
+                                        topLeading: 40,
+                                        bottomLeading: 40,
+                                        bottomTrailing: 0,
+                                        topTrailing: 0
+                                    ), style: .continuous)
+                                )
+                        )
+                }
+            }
             
             HStack(alignment: .firstTextBaseline, content: {
                 Text("Transactions")
@@ -20,6 +43,7 @@ struct ContentView: View {
             .padding(.leading, 10.0)
             ForEach(1...10, id: \.self) { _ in
                 DebitListView()
+                    .padding(.bottom, 5.0)
             }
             
         })

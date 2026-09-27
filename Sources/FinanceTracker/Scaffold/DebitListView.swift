@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DebitListView: View {
     
-    @State var showDetails: Bool = true
+    @State var showDetails: Bool = false
     var body: some View {
         VStack(alignment: .listRowSeparatorLeading, spacing: 0.0, content: {
             
@@ -56,6 +56,12 @@ struct DebitListView: View {
         })
         .frame(minHeight: 70.0)
         .padding(.horizontal, 10.0)
+        
+        .background(content: {
+            Color("primaryBG", bundle: .module)
+                .clipShape(RoundedRectangle(cornerRadius: 12.0))
+        })
+        
         .overlay(alignment: .center, content: {
             RoundedRectangle(cornerRadius: 12.0)
                 .stroke(Color.gray, lineWidth: 0.1)
@@ -70,7 +76,7 @@ struct DebitListView: View {
 }
 
 #Preview {
-    List(1...5, id: \.self) { _ in
+    List(1...1, id: \.self) { _ in
         DebitListView()
     }
 }
