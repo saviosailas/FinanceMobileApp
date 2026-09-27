@@ -11,24 +11,19 @@ import SkipSQLCore
 
 public struct Transaction: SQLCodable, Equatable {
     
-    public static let table: SkipSQLCore.SQLTable = SQLTable(
-        name: "TRANSACTIONS",
-        columns: [id, amount, date, transactionType, account]
-    )
-    
     public var id: Int64
     static let id = SQLColumn(name: "ID", type: .long, primaryKey: true, autoincrement: true, unique: true, nullable: false)
     
     public var amount: Double
     static let amount = SQLColumn(name: "AMOUNT", type: .real, nullable: false)
     
-    public var date: String
+    public var date: String?
     static let date = SQLColumn(name: "DATE", type: .text, nullable: false, defaultValue: .text(DateFormatter.time.string(from: Date())))
     
-    public var transactionType: String
+    public var transactionType: String?
     static let transactionType = SQLColumn(name: "TYPE", type: .text, nullable: false)
     
-    public var account: String
+    public var account: String?
     static let account = SQLColumn(name: "ACCOUNT", type: .text, nullable: false)
     
     
@@ -36,7 +31,7 @@ public struct Transaction: SQLCodable, Equatable {
         id: Int64 = 0,
         amount: Double,
         transationType: String,
-        account: String
+        account: String? = nil
     ) {
         print("[~][tr] init Transation")
         self.id = id
@@ -66,6 +61,11 @@ public struct Transaction: SQLCodable, Equatable {
         row[Self.transactionType] = SQLValue(self.transactionType)
         row[Self.account] = SQLValue(self.account)
     }
+    
+    public static let table: SkipSQLCore.SQLTable = SQLTable(
+        name: "TRANSACTIONS",
+        columns: [id, amount, date, transactionType, account]
+    )
     
 }
 
