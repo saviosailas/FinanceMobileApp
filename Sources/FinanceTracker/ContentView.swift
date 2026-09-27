@@ -5,47 +5,52 @@ struct ContentView: View {
     @State var viewModel = ViewModel()
 
     var body: some View {
-        ScrollView(.vertical, content: {
-            GreetingsView(action: {})
-            FinanceStatusCardView()
-                .padding(.top, 20.0)
-            
-            HStack(alignment: .center) {
-                Spacer()
-                Button(action: {
+        NavigationStack {
+            ScrollView(.vertical, content: {
+                GreetingsView(action: {})
+                FinanceStatusCardView()
+                    .padding(.top, 20.0)
+                
+                HStack(alignment: .center) {
+                    Spacer()
                     
-                }) {
-                    Text("Add transaction")
-                        .font(.title3)
-                        .foregroundStyle(Color("textPrimary", bundle: .module))
-                        .padding(7.0)
-                        .background(
-                            Color("titleColor", bundle: .module).opacity(0.9)
-                                .clipShape(
-                                    UnevenRoundedRectangle(cornerRadii: .init(
-                                        topLeading: 40,
-                                        bottomLeading: 40,
-                                        bottomTrailing: 0,
-                                        topTrailing: 0
-                                    ), style: .continuous)
-                                )
-                        )
+                    NavigationLink(value: "Add") {
+                        Text("Add transaction")
+                            .font(.title3)
+                            .foregroundStyle(Color("textPrimary", bundle: .module))
+                            .padding(7.0)
+                            .background(
+                                Color("titleColor", bundle: .module).opacity(0.9)
+                                    .clipShape(
+                                        UnevenRoundedRectangle(cornerRadii: .init(
+                                            topLeading: 40,
+                                            bottomLeading: 40,
+                                            bottomTrailing: 0,
+                                            topTrailing: 0
+                                        ), style: .continuous)
+                                    )
+                            )
+                    }
                 }
-            }
-            
-            HStack(alignment: .firstTextBaseline, content: {
-                Text("Transactions")
-                    .font(.title2)
-                    .foregroundStyle(Color.black)
-                Spacer()
+                
+                HStack(alignment: .firstTextBaseline, content: {
+                    Text("Transactions")
+                        .font(.title2)
+                        .foregroundStyle(Color.black)
+                    Spacer()
+                })
+                .padding(.top, 20.0)
+                .padding(.leading, 10.0)
+                ForEach(1...10, id: \.self) { _ in
+                    DebitListView()
+                        .padding(.bottom, 5.0)
+                }
+                
             })
-            .padding(.top, 20.0)
-            .padding(.leading, 10.0)
-            ForEach(1...10, id: \.self) { _ in
-                DebitListView()
-                    .padding(.bottom, 5.0)
+            .navigationDestination(for: String.self) { link in
+                AddTransactionView()
+                    .navigationTitle("New transaction")
             }
-            
-        })
+        }
     }
 }

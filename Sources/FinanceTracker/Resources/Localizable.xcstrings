@@ -7,6 +7,9 @@
     "(-)" : {
 
     },
+    "0" : {
+
+    },
     "3: 13 pm" : {
 
     },
@@ -16,10 +19,19 @@
     "12 July 2026" : {
 
     },
+    "Account" : {
+
+    },
+    "Add new" : {
+
+    },
     "Add transaction" : {
 
     },
     "Balance" : {
+
+    },
+    "Credit / Debit" : {
 
     },
     "Finance" : {
@@ -50,6 +62,12 @@
 
     },
     "Income this month" : {
+
+    },
+    "Money" : {
+
+    },
+    "New transaction" : {
 
     },
     "Spend this month" : {
