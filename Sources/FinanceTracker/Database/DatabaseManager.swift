@@ -14,12 +14,10 @@ actor DatabaseManager {
     
     private var dbContext: SQLContext?
     
-    let dbpath = URL.applicationSupportDirectory.appendingPathComponent("db.sqlite")
+    let dbpath = URL.applicationSupportDirectory.appendingPathComponent("finance.db")
     
     private init() {
         print("[~][db] init ")
-        let dbpath = URL.applicationSupportDirectory
-            .appendingPathComponent("finance.db")
         
         do {
             let fm = FileManager.default
@@ -40,11 +38,9 @@ actor DatabaseManager {
         }
     }
     
-    private func setupDatabase() {
-        
-    }
+    func safeInit() async { }
     
-    func createTables() throws {
+    func createTransaction(amount: Double, type: String, account: String) async {
         
     }
     

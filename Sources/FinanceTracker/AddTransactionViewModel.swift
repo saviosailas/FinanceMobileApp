@@ -13,19 +13,26 @@ import Observation
 @Observable public class AddTransactionViewModel {
 
     
-    let accountTypes = ["HDFC current", "HDFC FD", "Wallet"]
+    let accountTypes = ["HDFC savings", "HDFC FD", "Wallet"]
     
     let transferTypes = ["Credit", "Debit"] //, "Transfer"]
     
-    var selectedAccount = "HDFC current"
+    var selectedAccount = "HDFC savings"
     
     var selectedTransferType = "Debit"
     
     var amount: String = ""
     
     
-    func addButtonAction() {
+    nonisolated(nonsending) func addButtonAction() async {
+        print("amount: \(amount) | type: \(selectedTransferType) | account: \(selectedAccount)")
+        guard let amount: Double  = Double(amount.trimmingCharacters(in: .whitespaces)) else {
+            print("invalid")
+            return
+        }
+        print("amount: Double(\(amount))")
         
+        await DatabaseManager.shared.createTransaction(amount: amount, type: selectedTransferType, account: selectedAccount)
     }
     
 }

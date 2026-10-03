@@ -18,7 +18,7 @@ public struct FinanceTrackerRootView : View {
                 logger.info("Skip app logs are viewable in the Xcode console for iOS; Android logs can be viewed in Studio or using adb logcat")
                 
                 do {
-                    try await DatabaseManager.shared.createTables()
+                    try await DatabaseManager.shared.safeInit()
                 } catch {
                     print("[~][db] Database initialization failed: \(error)")
                 }

@@ -8,15 +8,8 @@
 import SwiftUI
 
 struct AddTransactionView: View {
-//    
-//    let accountTypes = ["HDFC current", "HDFC FD", "Wallet"]
-//    let transferTypes = ["Credit", "Debit"] //, "Transfer"]
-//    @State var selectedAccount = "HDFC current"
-//    @State var selectedTransferType = "Debit"
-//    
-//    @State var amount: String = ""
     
-    @State var vm = AddTransactionViewModel()
+    @State var vm: AddTransactionViewModel = .init()
     
     var body: some View {
         VStack(alignment: .center, spacing: 12.0) {
@@ -27,7 +20,7 @@ struct AddTransactionView: View {
                     Spacer()
                     TextField("0", text: $vm.amount)
                         .textFieldStyle(.roundedBorder)
-                        .keyboardType(.decimalPad)
+                        .keyboardType(.numberPad)
                         .frame(width: 150.0)
                 }
                 .padding(12.0)
@@ -72,7 +65,9 @@ struct AddTransactionView: View {
                         .labelStyle(.titleOnly)
             
             Button {
-                
+                Task {
+                    await vm.addButtonAction()
+                }
             } label: {
                 Text("Add new")
                     .font(.title2)
@@ -82,7 +77,7 @@ struct AddTransactionView: View {
                     )
                     .padding()
                     .background(
-                        Color.accentColor
+                        (vm.amount.isEmpty ? Color.gray : Color.blue)
                             .clipShape(
                                 UnevenRoundedRectangle(
                                     cornerRadii: .init(
@@ -109,3 +104,4 @@ struct AddTransactionView: View {
     }
     
 }
+
