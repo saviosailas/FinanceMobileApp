@@ -7,8 +7,8 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ScrollView(.vertical, content: {
-                GreetingsView(action: {})
-                FinanceStatusCardView()
+                HomeGreetingsView(action: {})
+                HomeMainCardView()
                     .padding(.top, 20.0)
                 
                 HStack(alignment: .center) {
@@ -42,7 +42,7 @@ struct ContentView: View {
                 .padding(.top, 20.0)
                 .padding(.leading, 10.0)
                 ForEach(1...10, id: \.self) { _ in
-                    DebitListView()
+                    DebitCellView()
                         .padding(.bottom, 5.0)
                 }
                 

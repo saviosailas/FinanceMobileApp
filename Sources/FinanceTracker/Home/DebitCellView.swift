@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DebitListView: View {
+struct DebitCellView: View {
     
     @State var showDetails: Bool = false
     var body: some View {
@@ -77,6 +77,6 @@ struct DebitListView: View {
 
 #Preview {
     List(1...1, id: \.self) { _ in
-        DebitListView()
+        DebitCellView()
     }
 }

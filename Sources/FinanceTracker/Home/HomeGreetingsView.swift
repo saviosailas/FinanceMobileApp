@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct GreetingsView: View {
+struct HomeGreetingsView: View {
     
     @AppStorage("username") var userName: String = ""
     @State private var timeOfDay: String = ""
@@ -78,7 +78,7 @@ struct GreetingsView: View {
 #if !SKIP
 #Preview {
     VStack(alignment: .center, content: {
-        GreetingsView(action: nil)
+        HomeGreetingsView(action: nil)
         Spacer()
     })
 }

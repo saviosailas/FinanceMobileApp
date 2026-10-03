@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FinanceStatusCardView: View {
+struct HomeMainCardView: View {
     
     @State var isExpanded: Bool = false
     
@@ -76,5 +76,5 @@ struct FinanceStatusCardView: View {
 }
 
 #Preview {
-    FinanceStatusCardView()
+    HomeMainCardView()
 }

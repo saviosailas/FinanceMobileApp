@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct AddTransactionView: View {
+//    
+//    let accountTypes = ["HDFC current", "HDFC FD", "Wallet"]
+//    let transferTypes = ["Credit", "Debit"] //, "Transfer"]
+//    @State var selectedAccount = "HDFC current"
+//    @State var selectedTransferType = "Debit"
+//    
+//    @State var amount: String = ""
     
-    let accountTypes = ["HDFC current", "HDFC FD", "Wallet"]
-    let transferTypes = ["Credit", "Debit"] //, "Transfer"]
-    @State var selectedAccount = "HDFC current"
-    @State var selectedTransferType = "Debit"
-    
-    @State var amount: String = ""
+    @State var vm = AddTransactionViewModel()
     
     var body: some View {
         VStack(alignment: .center, spacing: 12.0) {
@@ -23,7 +25,7 @@ struct AddTransactionView: View {
                 HStack {
                     Text("")
                     Spacer()
-                    TextField("0", text: $amount)
+                    TextField("0", text: $vm.amount)
                         .textFieldStyle(.roundedBorder)
                         .keyboardType(.decimalPad)
                         .frame(width: 150.0)
@@ -36,8 +38,8 @@ struct AddTransactionView: View {
             
             Label {
                 
-                Picker(selection: $selectedAccount) {
-                    ForEach(accountTypes, id: \.self) {
+                Picker(selection: $vm.selectedAccount) {
+                    ForEach(vm.accountTypes, id: \.self) {
                         Text($0)
                             .font(.title2)
                             .padding(12.0)
@@ -53,8 +55,8 @@ struct AddTransactionView: View {
             //            .labelStyle(.titleOnly)
             
             Label {
-                Picker(selection: $selectedTransferType) {
-                    ForEach(transferTypes, id: \.self) {
+                Picker(selection: $vm.selectedTransferType) {
+                    ForEach(vm.transferTypes, id: \.self) {
                         Text($0)
                             .font(.title2)
                             .padding(8.0)
