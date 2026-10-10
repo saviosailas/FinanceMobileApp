@@ -11,6 +11,8 @@ struct AddTransactionView: View {
     
     @State var vm: AddTransactionViewModel = .init()
     
+    @Environment(SQLDatabase.self) var database
+    
     var body: some View {
         VStack(alignment: .center, spacing: 12.0) {
             
@@ -65,9 +67,20 @@ struct AddTransactionView: View {
                         .labelStyle(.titleOnly)
             
             Button {
-                Task {
-                    await vm.addButtonAction()
-                }
+//                Task {
+                guard let amount = Double(vm.amount) else { return }
+                    database.createTransaction(
+                        amount: amount,
+                        date: .now,
+                        type: vm.selectedTransferType,
+                        accountName: vm.selectedAccount
+                    )
+//                    await vm.addButtonAction()
+                vm.amount = ""
+                
+                // MARK: GO BACK
+                
+//                }
             } label: {
                 Text("Add new")
                     .font(.title2)

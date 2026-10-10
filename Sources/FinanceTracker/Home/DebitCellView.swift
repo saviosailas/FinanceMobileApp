@@ -10,16 +10,22 @@ import SwiftUI
 struct DebitCellView: View {
     
     @State var showDetails: Bool = false
+    
+    var amount: Double
+    var account: String
+    var type: String
+    var date: Date
+    
     var body: some View {
         VStack(alignment: .listRowSeparatorLeading, spacing: 0.0, content: {
             
             
             HStack(alignment: .center, spacing: 0.0, content: {
-                Text("10,000")
-                    .font(.title2)
-                    .foregroundStyle(Color.primary)
+                Text(amount.description)
+                    .font(.title)
+                    .foregroundStyle(type == TransactionType.debit.rawValue ? Color.red : Color.primary)
                 Spacer()
-                Text("Food")
+                Text(account)
                     .font(.callout)
                     .foregroundStyle(Color.primary)
             })
@@ -28,13 +34,13 @@ struct DebitCellView: View {
             
             HStack(alignment: .bottom, spacing: 0.0, content: {
                 
-                Text("(-)")
-                    .font(.caption2)
-                    .foregroundStyle(Color.red)
+                Text("")
+//                    .font(.caption2)
+//                    .foregroundStyle(Color.red)
                 
                 Spacer()
                 
-                Text("12 July 2026")
+                Text(date.formatted(date: .abbreviated, time: .omitted))
                     .font(.caption2)
                     .foregroundStyle(Color.gray)
             })
@@ -46,7 +52,7 @@ struct DebitCellView: View {
                     
                     Spacer()
                     
-                    Text("3: 13 pm")
+                    Text(date.formatted(date: .omitted, time: .shortened))
                         .font(.caption2)
                         .foregroundStyle(Color.black)
                 })
@@ -75,8 +81,8 @@ struct DebitCellView: View {
     }
 }
 
-#Preview {
-    List(1...1, id: \.self) { _ in
-        DebitCellView()
-    }
-}
+//#Preview {
+//    List(1...1, id: \.self) { _ in
+//        DebitCellView()
+//    }
+//}

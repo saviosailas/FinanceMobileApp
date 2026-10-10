@@ -41,7 +41,26 @@ actor DatabaseManager {
     func safeInit() async { }
     
     func createTransaction(amount: Double, type: String, account: String) async {
+        guard let ctx = dbContext else {
+            print("[~][db] Database context is not initialized")
+            return
+        }
         
+        do {
+            // Create a transaction instance with the provided values
+            let transaction = Transaction(
+                amount: amount,
+                transationType: type,
+                account: account
+            )
+            
+            // Insert the transaction into the database
+            _ = try ctx.insert(transaction)
+            
+            print("[~][db] Transaction created successfully: \(transaction)")
+        } catch {
+            print("[~][db] Error creating transaction: \(error)")
+        }
     }
     
 }

@@ -12,16 +12,28 @@ public struct FinanceTrackerRootView : View {
     public init() {
     }
 
+    static func getDB() -> SQLDatabase {
+        do {
+            return try SQLDatabase(name: "finance.db")
+        } catch let error {
+            return SQLDatabase()
+        }
+    }
+    
+    @State var database: SQLDatabase = getDB()
+    
     public var body: some View {
         ContentView()
+            .environment(database)
+//        SQLPlayground()
             .task {
                 logger.info("Skip app logs are viewable in the Xcode console for iOS; Android logs can be viewed in Studio or using adb logcat")
                 
-                do {
-                    try await DatabaseManager.shared.safeInit()
-                } catch {
-                    print("[~][db] Database initialization failed: \(error)")
-                }
+//                do {
+//                    try await DatabaseManager.shared.safeInit()
+//                } catch {
+//                    print("[~][db] Database initialization failed: \(error)")
+//                }
             }
     }
 }
