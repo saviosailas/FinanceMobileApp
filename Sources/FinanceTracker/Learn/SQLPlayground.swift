@@ -40,7 +40,7 @@ struct SQLItemListView: View {
             Button {
                 withAnimation {
 //                    database.createItem()
-                    database.createTransaction(amount: 100.0, date: .now, type: "Debit", accountName: "HDFC Test bank")
+                    database.createTransaction(amount: 100.0, date: .now, type: "Debit", accountName: "BANK Test bank")
                 }
             } label: {
                 Label("Add", systemImage: "plus")

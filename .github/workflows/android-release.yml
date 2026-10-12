@@ -31,7 +31,6 @@ jobs:
             --no-ios-sim \
             --no-export-project \
             --no-validate-export \
-            --arch aarch64 \
             -d ./artifacts
 
       - name: Find APK files
