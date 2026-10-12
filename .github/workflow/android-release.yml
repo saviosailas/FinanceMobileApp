@@ -1,0 +1,46 @@
+name: Build Skip Lite Android APK
+
+on:
+  push:
+    branches: develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Skip
+        uses: skiptools/actions/setup-skip@v1
+        with:
+          run-doctor: "true"
+
+      - name: Build Android release APK
+        run: |
+          skip export \
+            --release \
+            --android \
+            --no-ios \
+            --no-ios-sim \
+            --no-export-project \
+            --no-validate-export \
+            --arch aarch64 \
+            -d ./artifacts
+
+      - name: Find APK files
+        run: find ./artifacts -type f -name "*.apk" -print
+
+      - name: Upload APK to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: skip-lite-android-release
+          path: artifacts/**/*.apk
+          if-no-files-found: error
+          retention-days: 14
