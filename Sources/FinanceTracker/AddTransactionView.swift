@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AddTransactionView: View {
     
+    @Environment(\.dismiss) private var dismiss
+    
     @State var vm: AddTransactionViewModel = .init()
     
     @Environment(SQLDatabase.self) var database
@@ -64,23 +66,29 @@ struct AddTransactionView: View {
                 Text("Credit / Debit")
                     .font(.title2)
             }
-                        .labelStyle(.titleOnly)
+            .labelStyle(.titleOnly)
             
             Button {
-//                Task {
+                //                Task {
                 guard let amount = Double(vm.amount) else { return }
-                    database.createTransaction(
-                        amount: amount,
-                        date: .now,
-                        type: vm.selectedTransferType,
-                        accountName: vm.selectedAccount
-                    )
-//                    await vm.addButtonAction()
+                database.createTransaction(
+                    amount: amount,
+                    date: .now,
+                    type: vm.selectedTransferType,
+                    accountName: vm.selectedAccount
+                )
+                //                    await vm.addButtonAction()
                 vm.amount = ""
+                Task.detached {
+                    await MainActor.run {
+                        dismiss()
+                    }
+                }
+                
                 
                 // MARK: GO BACK
                 
-//                }
+                //                }
             } label: {
                 Text("Add new")
                     .font(.title2)

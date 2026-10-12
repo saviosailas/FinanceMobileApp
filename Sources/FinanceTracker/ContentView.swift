@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct ContentView: View {
-   
+    
     @State var viewModel = ViewModel()
     @Environment(SQLDatabase.self) var database
-
+    
     var body: some View {
         NavigationStack {
             ScrollView(
@@ -44,18 +44,29 @@ struct ContentView: View {
                     })
                     .padding(.top, 20.0)
                     .padding(.leading, 10.0)
-                    //                ForEach(1...10, id: \.self) { _ in
-                    ForEach(database.transactionItem) { item in
-                        DebitCellView(
-                            amount: item.amount,
-                            account: item.accountName,
-                            type: item.type,
-                            date: item.date
-                        )
-                        .padding(.bottom, 5.0)
-                }
-                
-            })
+                    
+//                    List {
+                        //                ForEach(1...10, id: \.self) { _ in
+                        Section {
+                            
+                            
+                            ForEach(database.transactionItem) { item in
+                                DebitCellView(
+                                    amount: item.amount,
+                                    account: item.accountName,
+                                    type: item.type,
+                                    date: item.date
+                                )
+                                .padding(.bottom, 5.0)
+                            }
+                            .onDelete { indices in
+                                database.deleteItems(atOffsets: Array(indices))
+                            }
+                            
+                        }
+//                    }
+                    
+                })
             .navigationDestination(for: String.self) { link in
                 AddTransactionView()
                     .navigationTitle("New transaction")
