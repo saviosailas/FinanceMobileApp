@@ -67,7 +67,15 @@ struct AddTransactionView: View {
                     .font(.title2)
             }
             .labelStyle(.titleOnly)
-            
+            TextField("", text: $vm.note, prompt: Text("optional note"))
+                .padding(.vertical)
+//                .overlay {
+//                    RoundedRectangle(cornerRadius: 12.0)
+//                        .stroke(lineWidth: 1.0)
+//                        .foregroundStyle(
+//                            Color.blue
+//                        )
+//                }
             Button {
                 //                Task {
                 guard let amount = Double(vm.amount) else { return }
@@ -75,7 +83,8 @@ struct AddTransactionView: View {
                     amount: amount,
                     date: .now,
                     type: vm.selectedTransferType,
-                    accountName: vm.selectedAccount
+                    accountName: vm.selectedAccount,
+                    note: vm.note
                 )
                 //                    await vm.addButtonAction()
                 vm.amount = ""

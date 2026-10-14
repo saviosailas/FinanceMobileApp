@@ -11,6 +11,7 @@ struct HomeGreetingsView: View {
     
     @AppStorage("username") var userName: String = ""
     @State private var timeOfDay: String = ""
+    @State var showEditAlert: Bool = false
     
     let action: (() -> Void)?
     
@@ -27,6 +28,14 @@ struct HomeGreetingsView: View {
                         .bold()
                         .foregroundStyle(Color.gray)
                         .foregroundStyle(Color("TitleColor", bundle: .module))
+                    Button(action: {
+                        showEditAlert = true
+                    }) {
+                        Image("edit", bundle: .module)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 16, height: 16)
+                    }
                 })
                 
                 Text(timeOfDay)
@@ -59,6 +68,21 @@ struct HomeGreetingsView: View {
         .onAppear {
             updateTimeOfDay()
         }
+        .sheet(isPresented: $showEditAlert) {
+                    VStack(spacing: 16) {
+                        Text("Enter your name")
+                            .font(.headline)
+
+                        TextField("Name", text: $userName)
+                            .textFieldStyle(.roundedBorder)
+                            Button("OK") {
+                                showEditAlert = false
+                            }
+                    }
+                    .padding()
+                    .presentationDetents([.height(200)])
+                
+            }
     }
     
     private func updateTimeOfDay() {

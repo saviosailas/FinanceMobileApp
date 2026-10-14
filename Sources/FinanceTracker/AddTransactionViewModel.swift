@@ -25,15 +25,17 @@ enum AccountType: String, CaseIterable {
 
     
 //    let accountTypes: [String] = AccountType.allCases.map { $0.rawValue }
-    let accountTypes: [String] = AccountType.allCases.map(\.rawValue)
+    @ObservationIgnored let accountTypes: [String] = AccountType.allCases.map(\.rawValue)
     
-    let transferTypes: [String] = TransferType.allCases.map { $0.rawValue }
+    @ObservationIgnored let transferTypes: [String] = TransferType.allCases.map { $0.rawValue }
     
     var selectedAccount: String = AccountType.bankSavings.rawValue
     
     var selectedTransferType: String = TransferType.credit.rawValue
     
     var amount: String = ""
+    
+    var note: String = ""
 
 
     func addButtonAction() async {
