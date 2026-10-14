@@ -22,8 +22,29 @@ jobs:
         with:
           run-doctor: "true"
 
-      - name: Build Android release APK
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install required Android SDK packages
+        shell: bash
         run: |
+          set -euxo pipefail
+          export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
+          yes | sdkmanager --licenses
+          sdkmanager --install "platform-tools" "platforms;android-35" "platforms;android-34" "build-tools;35.0.0"
+
+      - name: Build Android release APK
+        shell: bash
+        run: |
+          set -euxo pipefail
+          export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
           skip export \
             --release \
             --android \
@@ -31,7 +52,22 @@ jobs:
             --no-ios-sim \
             --no-export-project \
             --no-validate-export \
+            --arch aarch64 \
             -d ./artifacts
+
+      - name: Collect Skip export logs
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          echo "=== /tmp contents ==="
+          ls -la /tmp || true
+          for f in /tmp/skip-export-*.txt; do
+            if [ -f "$f" ]; then
+              echo "===== $f ====="
+              sed -n '1,250p' "$f" || true
+            fi
+          done
 
       - name: Find APK files
         run: find ./artifacts -type f -name "*.apk" -print
