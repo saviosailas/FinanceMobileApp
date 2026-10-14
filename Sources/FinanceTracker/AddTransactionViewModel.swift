@@ -8,7 +8,7 @@
 import Foundation
 import Observation
 
-enum TransferType: String, CaseIterable {
+enum TransactionType: String, CaseIterable {
     case debit
     case credit
     case transfer
@@ -27,11 +27,11 @@ enum AccountType: String, CaseIterable {
 //    let accountTypes: [String] = AccountType.allCases.map { $0.rawValue }
     @ObservationIgnored let accountTypes: [String] = AccountType.allCases.map(\.rawValue)
     
-    @ObservationIgnored let transferTypes: [String] = TransferType.allCases.map { $0.rawValue }
+    @ObservationIgnored let transferTypes: [String] = TransactionType.allCases.map { $0.rawValue }
     
     var selectedAccount: String = AccountType.bankSavings.rawValue
     
-    var selectedTransferType: String = TransferType.credit.rawValue
+    var selectedTransferType: String = TransactionType.credit.rawValue
     
     var amount: String = ""
     

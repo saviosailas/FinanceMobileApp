@@ -17,6 +17,18 @@ struct DebitCellView: View {
     var date: Date
     var note: String
     
+    func getTextColor(for type: String) -> Color {
+        let x = TransactionType(rawValue: type)
+        return switch x {
+        case .debit:
+            Color.red
+        case .transfer:
+            Color.blue
+        case .credit, nil:
+            Color.primary
+        }
+    }
+    
     var body: some View {
         // 1. The main container that holds the background and border
         VStack(alignment: .leading, spacing: 0) {
@@ -26,7 +38,9 @@ struct DebitCellView: View {
                 HStack(alignment: .center, spacing: 0.0) {
                     Text(amount.description)
                         .font(.title)
-                        .foregroundStyle(type == TransactionType.debit.rawValue ? Color.red : Color.primary)
+                        .foregroundStyle(
+                            getTextColor(for: type)
+                        )
                     
                     Spacer()
                     

@@ -78,8 +78,3 @@ extension DateFormatter {
     }()
 }
 
-
-enum TransactionType: String {
-    case credit
-    case debit
-}
