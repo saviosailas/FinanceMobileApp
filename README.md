@@ -34,7 +34,13 @@ It is important to add `--no-build` to avoid unwanted xcode build issues.
 <img alt="Android Screenshot" src="Android/fastlane/metadata/android/en-US/images/phoneScreenshots/1_en-US.png" style="width: 18%" /> <img alt="Android Screenshot" src="Android/fastlane/metadata/android/en-US/images/phoneScreenshots/2_en-US.png" style="width: 18%" /> <img alt="Android Screenshot" src="Android/fastlane/metadata/android/en-US/images/phoneScreenshots/3_en-US.png" style="width: 18%" /> <img alt="Android Screenshot" src="Android/fastlane/metadata/android/en-US/images/phoneScreenshots/4_en-US.png" style="width: 18%" /> <img alt="Android Screenshot" src="Android/fastlane/metadata/android/en-US/images/phoneScreenshots/5_en-US.png" style="width: 18%" />
 -->
 
-## Building
+### Android export command
+
+```bash
+skip export --release --android --no-ios --no-ios-sim --no-export-project --no-validate-export -d export --show-tree
+```
+
+ ## Building
 
 This project is both a stand-alone Swift Package Manager module,
 as well as an Xcode project that builds and translates the project

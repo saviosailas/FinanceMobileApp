@@ -1,0 +1,67 @@
+name: Build Skip Lite Android APK
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Skip
+        uses: skiptools/actions/setup-skip@v1
+        with:
+          run-doctor: "true"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install required Android SDK packages
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/Users/runner/Library/Android/sdk}}"
+          export ANDROID_SDK_ROOT="$SDK_ROOT"
+          export PATH="$SDK_ROOT/cmdline-tools/latest/bin:$SDK_ROOT/tools/bin:$PATH"
+
+          # Install/update cmdline-tools first
+          yes | sdkmanager --install "cmdline-tools;latest"
+
+          # Then accept licenses and install required SDKs
+          yes | sdkmanager --licenses
+          sdkmanager --install "platform-tools" "platforms;android-35" "platforms;android-34" "build-tools;35.0.0"
+
+      - name: Build Android release APK
+        shell: bash
+        run: |
+          set -euxo pipefail
+          export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
+          skip export \
+            --release \
+            --android \
+            --no-ios \
+            --no-ios-sim \
+            --no-export-project \
+            --no-validate-export \
+            --arch aarch64 \
+            -d ./artifacts

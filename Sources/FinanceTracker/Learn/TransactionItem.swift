@@ -25,21 +25,26 @@ public struct TransactionItem: Identifiable, Hashable, SQLCodable {
     
     public var accountName: String
     static let accountName = SQLColumn(name: "ACCOUNT_NAME", type: .text, index: SQLIndex(name: "IDX_ACC_NAME"))
+    
+    public var note: String
+    static let note = SQLColumn(name: "NOTE", type: .text, index: SQLIndex(name: "IDX_NOTE"))
 
-    public static let table = SQLTable(name: "TRANSACTION_ITEM", columns: [id, amount, date, type, accountName])
+    public static let table = SQLTable(name: "TRANSACTION_ITEM", columns: [id, amount, date, type, accountName, note])
 
     public init(
         id: Int64 = 0,
         amount: Double,
         date: Date,
         type: String,
-        accountName: String
+        accountName: String,
+        userNote: String
     ) {
         self.id = id
         self.amount = amount
         self.date = date
         self.type = type
         self.accountName = accountName
+        self.note = userNote
     }
 
     /// Required initializer to create an instance from the given `SQLRow = [SQLColumn: SQLValue]`
@@ -49,6 +54,7 @@ public struct TransactionItem: Identifiable, Hashable, SQLCodable {
         self.date = try Self.date.dateValueRequired(in: row)
         self.type = try Self.type.textValueRequired(in: row)
         self.accountName = try Self.accountName.textValueRequired(in: row)
+        self.note = try Self.note.textValueRequired(in: row)
     }
 
     /// Encode the current instance into the given `SQLRow` dictionary.
@@ -58,5 +64,6 @@ public struct TransactionItem: Identifiable, Hashable, SQLCodable {
         row[Self.date] = SQLValue(self.date.timeIntervalSince1970)
         row[Self.type] = SQLValue(self.type)
         row[Self.accountName] = SQLValue(self.accountName)
+        row[Self.note] = SQLValue(self.note)
     }
 }

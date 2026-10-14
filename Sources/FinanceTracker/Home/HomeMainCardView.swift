@@ -11,13 +11,19 @@ struct HomeMainCardView: View {
     
     @State var isExpanded: Bool = false
     
+    @Environment(SQLDatabase.self) var database: SQLDatabase
+    
     var body: some View {
         HStack(alignment: .center, content: {
             
             VStack(alignment: .leading, spacing: 0.0, content: {
-                Text(verbatim: "4,23,453")
+                Text(formatNumber(database.balance))
                     .font(.title)
                     .foregroundStyle(Color("textPrimary", bundle: .module))
+                    .onTapGesture {
+                        print("tapped me")
+                        database.refreshAnalytics()
+                    }
                 Text("Balance")
                     .font(.caption)
                     .foregroundStyle(Color("textSecondary", bundle: .module))
@@ -32,15 +38,15 @@ struct HomeMainCardView: View {
                                 .font(.callout)
                                 .foregroundStyle(Color("textSecondary", bundle: .module))
                             Spacer()
-                            Text(verbatim: "5,024")
+                            Text(formatNumber(database.thisMonthExpense))
                         })
                         
-                        HStack(alignment: .center, content: {
+                        HStack(alignment:.center, content: {
                             Text("Income this month")
                                 .font(.callout)
                                 .foregroundStyle(Color("textSecondary", bundle: .module))
                             Spacer()
-                            Text(verbatim: "54,000")
+                            Text(formatNumber(database.thisMonthCredit))
                         })
                     })
                 }, label: {
@@ -72,6 +78,22 @@ struct HomeMainCardView: View {
             isExpanded.toggle()
         }
         .padding()
+        .task {
+            database.refreshAnalytics()
+        }
+    }
+    
+//    private func refreshData() async {
+//        balance = await DatabaseManager.shared.fetchTotalBalance()
+//        monthlySpend = await DatabaseManager.shared.fetchMonthlySpend()
+//        monthlyIncome = await DatabaseManager.shared.fetchMonthlyIncome()
+//    }
+    
+    private func formatNumber(_ number: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+//        formatter.groupingStyle = .defaultGrouping
+        return formatter.string(from: NSNumber(value: number)) ?? "0"
     }
 }
 

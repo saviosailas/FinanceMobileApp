@@ -55,7 +55,8 @@ struct ContentView: View {
                                     amount: item.amount,
                                     account: item.accountName,
                                     type: item.type,
-                                    date: item.date
+                                    date: item.date,
+                                    note: item.note
                                 )
                                 .padding(.bottom, 5.0)
                             }
