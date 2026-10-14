@@ -2,7 +2,10 @@ name: Build Skip Lite Android APK
 
 on:
   push:
-    branches: develop
+    branches: [develop]
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+    branches: [develop]
   workflow_dispatch:
 
 permissions:
