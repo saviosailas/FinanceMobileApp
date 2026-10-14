@@ -21,6 +21,12 @@ import Foundation
     
     public var transactionItem: [TransactionItem] = []
     
+    public var balance: Double = 0.0
+    
+    public var thisMonthExpense: Double = 0.0
+    
+    public var thisMonthCredit: Double = 0.0
+    
     
     /// The list of all the statements that have been executed
     public var statements: [String] = []
@@ -118,7 +124,10 @@ import Foundation
         
         if context.userVersion < 3 {
             // future schema migrations go here…
-            
+            for ddl in AnalyticsItem.table.createTableSQL(ifNotExists: true, columns: [AnalyticsItem.id, AnalyticsItem.amount]) {
+                try context.exec(ddl)
+            }
+            context.userVersion = 3
             // MARK: Eduction
             //            let transactionColumn = [
             //                TransactionItem.id,
@@ -221,6 +230,118 @@ import Foundation
         }
     }
     
+    public func refreshAnalytics() {
+        guard let context else { return }
+        reloading {
+            
+            let calendar = Calendar.current
+            let now = Date()
+            guard let interval = calendar.dateInterval(of: .month, for: now) else {
+                return
+            }
+            
+//            let predicate = TransactionItem.date
+//                .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+//                .and(
+//                    TransactionItem.date.lessThan(
+//                        SQLValue(interval.end.timeIntervalSince1970)
+//                    )
+//                )
+//            
+//            let transactions = try context.query(TransactionItem.self)
+//                .where(predicate)
+//                .orderBy(TransactionItem.date, order: .descending)
+//                .eval()
+//                .load()
+//            
+//            print("[~] monlty transactions: \(transactions.count)")
+            
+            let predicate2 = TransactionItem.date
+                .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+                .and(TransactionItem.date.lessThan(
+                        SQLValue(interval.end.timeIntervalSince1970)
+                    )
+                )
+                .and(TransactionItem.type.equals(
+                        SQLValue(TransactionType.debit.rawValue)
+                    )
+                )
+            
+            let debits = try context.query(TransactionItem.self)
+                .where(predicate2)
+                .orderBy(TransactionItem.date, order: .descending)
+                .eval()
+                .load()
+            let debit = debits.map( { $0.amount}).reduce(0.0, +)
+
+            
+            print("[~] debit: \(debits.count)")
+            print("[~] debit: \(debit )")
+
+            
+            
+            let predicate3 = TransactionItem.date
+                .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+                .and(TransactionItem.date.lessThan(
+                        SQLValue(interval.end.timeIntervalSince1970)
+                    )
+                )
+                .and(TransactionItem.type.equals(
+                        SQLValue(TransactionType.credit.rawValue)
+                    )
+                )
+            
+            let credits = try context.query(TransactionItem.self)
+                .where(predicate3)
+                .orderBy(TransactionItem.date, order: .descending)
+                .eval()
+                .load()
+            let credit = credits.map( { $0.amount}).reduce(0.0, +)
+            
+            
+            print("[~] credit: \(credits.count)")
+            print("[~] credit: \(credit)")
+            
+            
+            // filter quest based on debit and credit
+            
+            // sim credit and debit respectively
+            
+            thisMonthCredit = credit
+            thisMonthExpense = debit
+            
+            let data = try context.query(AnalyticsItem.self)
+                .eval()
+                .load(count: 1)
+            print("data: \(data)")
+            
+            let pred = [
+                TransactionItem.type.equals(
+                    SQLValue(TransactionType.credit.rawValue)
+                ),
+                TransactionItem.type.equals(
+                    SQLValue(TransactionType.debit.rawValue)
+                )
+            ]
+            
+            var total = 0.0
+            for predicate in pred {
+                let result = try context.query(TransactionItem.self)
+                    .where(predicate)
+//                    .orderBy(TransactionItem.date, order: .descending)
+                    .eval()
+                    .load()
+                let amount = result.map( { $0.amount }) .reduce(0.0, +)
+                if total == 0.0 { // first [ credit, debit ]
+                    total += amount
+                } else {
+                    total -= amount
+                }
+            }
+            balance = total
+            
+        }
+    }
     /// Move the items from the given `source` offsets in the `items` array to the given `destination` index
     //    public func moveItems(fromOffsets source: Array<Int>, toOffset destination: Int) {
     //        guard let context else { return }
