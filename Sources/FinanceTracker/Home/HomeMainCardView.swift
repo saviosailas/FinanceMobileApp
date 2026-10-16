@@ -22,7 +22,7 @@ struct HomeMainCardView: View {
                     .foregroundStyle(Color("textPrimary", bundle: .module))
                     .onTapGesture {
                         print("tapped me")
-                        database.refreshAnalytics()
+                        database.refreshCurrentMonthAnalytics()
                     }
                 Text("Balance")
                     .font(.caption)
@@ -79,7 +79,7 @@ struct HomeMainCardView: View {
         }
         .padding()
         .task {
-            database.refreshAnalytics()
+            database.refreshCurrentMonthAnalytics()
         }
     }
     

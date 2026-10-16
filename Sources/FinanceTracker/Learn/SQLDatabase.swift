@@ -230,7 +230,7 @@ import Foundation
         }
     }
     
-    public func refreshAnalytics() {
+    public func refreshCurrentMonthAnalytics() {
         guard let context else { return }
         reloading {
             
