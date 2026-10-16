@@ -124,7 +124,7 @@ import Foundation
         
         if context.userVersion < 3 {
             // future schema migrations go here…
-            for ddl in AnalyticsItem.table.createTableSQL(ifNotExists: true, columns: [AnalyticsItem.id, AnalyticsItem.amount]) {
+            for ddl in AnalyticsItem.table.createTableSQL(ifNotExists: true, columns: [AnalyticsItem.id, AnalyticsItem.amount, AnalyticsItem.expense, AnalyticsItem.credit]) {
                 try context.exec(ddl)
             }
             context.userVersion = 3
@@ -342,6 +342,10 @@ import Foundation
             
         }
     }
+    
+    
+    
+    
     /// Move the items from the given `source` offsets in the `items` array to the given `destination` index
     //    public func moveItems(fromOffsets source: Array<Int>, toOffset destination: Int) {
     //        guard let context else { return }
