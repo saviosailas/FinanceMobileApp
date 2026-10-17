@@ -16,28 +16,49 @@ public struct AnalyticsItem: Identifiable, Hashable, SQLCodable {
 
     public var amount: Double
     static let amount = SQLColumn(name: "AMOUNT", type: .real, index: SQLIndex(name: "IDX_AMOUNT"))
+    
+    public var expense: Double
+    static let expense = SQLColumn(name: "EXPENSE", type: .real, index: SQLIndex(name: "IDX_AMOUNT"))
+    
+    public var credit: Double
+    static let credit = SQLColumn(name: "CREDIT", type: .real, index: SQLIndex(name: "IDX_AMOUNT"))
+    
+    public var monthYearCombo: Int64
+    static let monthYearCombo = SQLColumn(name: "MONTH_YEAR_NUMBER", type: .long)
 
 
-    public static let table = SQLTable(name: "ANALYTICS_ITEM", columns: [id, amount])
+    public static let table = SQLTable(name: "ANALYTICS_ITEM", columns: [id, amount, expense, credit, monthYearCombo])
 
     public init(
         id: Int64 = 0,
-        amount: Double
+        amount: Double,
+        expense: Double,
+        credit: Double,
+        monthYearCombo: Int64
     ) {
         self.id = id
         self.amount = amount
+        self.expense = expense
+        self.credit = credit
+        self.monthYearCombo = monthYearCombo
     }
 
     /// Required initializer to create an instance from the given `SQLRow = [SQLColumn: SQLValue]`
     public init(row: SQLRow, context: SQLContext) throws {
         self.id = try Self.id.longValueRequired(in: row)
         self.amount = try Self.amount.realValueRequired(in: row)
+        self.expense = try Self.expense.realValueRequired(in: row)
+        self.credit = try Self.credit.realValueRequired(in: row)
+        self.monthYearCombo = try Self.monthYearCombo.longValueRequired(in: row)
     }
 
     /// Encode the current instance into the given `SQLRow` dictionary.
     public func encode(row: inout SQLRow) throws {
         row[Self.id] = SQLValue(self.id)
         row[Self.amount] = SQLValue(self.amount)
+        row[Self.expense] = SQLValue(self.expense)
+        row[Self.credit] = SQLValue(self.credit)
+        row[Self.monthYearCombo] = SQLValue(self.monthYearCombo)
     }
 }
 

@@ -22,8 +22,8 @@ struct DebitCellView: View {
         return switch x {
         case .debit:
             Color.red
-        case .transfer:
-            Color.blue
+//        case .transfer:
+//            Color.blue
         case .credit, nil:
             Color.primary
         }
