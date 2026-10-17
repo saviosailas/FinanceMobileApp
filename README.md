@@ -78,3 +78,7 @@ which will output a table of the test results for both platforms.
 #### Icons color
 #65ae57
 </details>
+
+
+<img height="700" alt="screenshot" src="https://github.com/user-attachments/assets/2d75f887-1882-4ccc-8187-2744c2b118c4" />
+
