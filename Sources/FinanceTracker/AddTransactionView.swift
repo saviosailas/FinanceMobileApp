@@ -69,13 +69,6 @@ struct AddTransactionView: View {
             .labelStyle(.titleOnly)
             TextField("", text: $vm.note, prompt: Text("optional note"))
                 .padding(.vertical)
-//                .overlay {
-//                    RoundedRectangle(cornerRadius: 12.0)
-//                        .stroke(lineWidth: 1.0)
-//                        .foregroundStyle(
-//                            Color.blue
-//                        )
-//                }
             Button {
                 //                Task {
                 guard let amount = Double(vm.amount) else { return }

@@ -1,17 +1,17 @@
+////
+////  AddTransactionViewModel.swift
+////  FinanceMobileApp
+////
+////  Created by user on 03/10/26.
+////
 //
-//  AddTransactionViewModel.swift
-//  FinanceMobileApp
-//
-//  Created by user on 03/10/26.
-//
-
 import Foundation
 import Observation
-
+//
 enum TransactionType: String, CaseIterable {
     case debit
     case credit
-    case transfer
+//    case transfer
 }
 
 enum AccountType: String, CaseIterable {
@@ -24,7 +24,6 @@ enum AccountType: String, CaseIterable {
 @Observable public class AddTransactionViewModel {
 
     
-//    let accountTypes: [String] = AccountType.allCases.map { $0.rawValue }
     @ObservationIgnored let accountTypes: [String] = AccountType.allCases.map(\.rawValue)
     
     @ObservationIgnored let transferTypes: [String] = TransactionType.allCases.map { $0.rawValue }
@@ -36,17 +35,5 @@ enum AccountType: String, CaseIterable {
     var amount: String = ""
     
     var note: String = ""
-
-
-    func addButtonAction() async {
-        print("[~][vm] amount: \(amount) | type: \(selectedTransferType) | account: \(selectedAccount)")
-        guard let amount: Double  = Double(amount.trimmingCharacters(in: .whitespaces)) else {
-            print("[~][vm] invalid amount")
-            return
-        }
-        print("[~][vm] amount: Double(\(amount))")
-
-        await DatabaseManager.shared.createTransaction(amount: amount, type: selectedTransferType, account: selectedAccount)
-    }
     
 }
