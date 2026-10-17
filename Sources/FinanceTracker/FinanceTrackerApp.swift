@@ -21,20 +21,32 @@ public struct FinanceTrackerRootView : View {
     }
     
     @State var database: SQLDatabase = getDB()
+    @State var currentTab: Tabs = .home
     
     public var body: some View {
-        ContentView()
-            .environment(database)
-//        SQLPlayground()
-            .task {
-                logger.info("Skip app logs are viewable in the Xcode console for iOS; Android logs can be viewed in Studio or using adb logcat")
-                
-//                do {
-//                    try await DatabaseManager.shared.safeInit()
-//                } catch {
-//                    print("[~][db] Database initialization failed: \(error)")
-//                }
-            }
+        TabView(selection: $currentTab) {
+            HomeView()
+                .environment(database)
+                .task {
+                    logger.info("Skip app logs are viewable in the Xcode console for iOS; Android logs can be viewed in Studio or using adb logcat")
+                }
+                .tabItem { Label("", systemImage: "house.fill") }
+                .tag(Tabs.home)
+            
+            HistoryView()
+                .environment(database)
+                .tabItem { Label("", systemImage: "calendar") }
+                .tag(Tabs.history)
+            Text("About")
+                .tabItem { Label("", systemImage: "heart.fill") }
+                .tag(Tabs.about)
+        }
+    }
+    
+    enum Tabs: String, CaseIterable {
+    case home
+    case history
+    case about
     }
 }
 

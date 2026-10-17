@@ -18,6 +18,9 @@ import Foundation
     
     public var transactionItem: [TransactionItem] = []
     
+    public var selectedDate: Date = Date()// history view
+    public var historyTransactions: [TransactionItem] = []
+    
     public var balance: Double = 0.0
     
     public var thisMonthExpense: Double = 0.0
@@ -45,6 +48,25 @@ import Foundation
     
     public init() {
         context = nil
+    }
+    
+    nonisolated func refreshMonthlyTransaction() throws {
+        guard let context else { return }
+        guard let interval = calendar.dateInterval(of: .month, for: selectedDate) else {
+            return
+        }
+        let predicate = TransactionItem.date
+            .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+            .and(
+                TransactionItem.date
+                    .lessThanOrEqual(SQLValue(interval.end.timeIntervalSince1970))
+            )
+        
+        self.historyTransactions = try context.query(TransactionItem.self)
+            .where(predicate)
+            .orderBy(TransactionItem.date, order: .descending)
+            .eval()
+            .load()
     }
     
     private func createOrMigrateSchema() throws {
@@ -110,11 +132,39 @@ import Foundation
     /// Read all the items from the database, storing them in the observable `items` property
     func readItems() throws {
         guard let context else { return }
+        
+        let now = Date()
+        guard let interval = calendar.dateInterval(of: .month, for: now) else {
+            return
+        }
+        
+        let predicate = TransactionItem.date
+            .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+            .and(
+                TransactionItem.date
+                    .lessThanOrEqual(SQLValue(interval.end.timeIntervalSince1970))
+            )
+        
         self.transactionItem = try context.query(TransactionItem.self)
+            .where(predicate)
             .orderBy(TransactionItem.date, order: .descending)
             .eval()
             .load()
     }
+    
+//    let predicate = TransactionItem.date
+    ///                .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+    ///               .and(
+    ///                    TransactionItem.date.lessThan(
+    ///                        SQLValue(interval.end.timeIntervalSince1970)
+    ///                    )
+    ///                )
+    ///
+    ///            let transactions = try context.query(TransactionItem.self)
+    ///                .where(predicate)
+    ///                .orderBy(TransactionItem.date, order: .descending)
+    ///                .eval()
+    ///                .load()
     
     
     public func getMonthYearCombo(for date: Date) -> Int64 {

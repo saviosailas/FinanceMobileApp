@@ -1,8 +1,7 @@
 import SwiftUI
 
-struct ContentView: View {
+struct HomeView: View {
     
-    @State var viewModel = ViewModel()
     @Environment(SQLDatabase.self) var database
     
     var body: some View {

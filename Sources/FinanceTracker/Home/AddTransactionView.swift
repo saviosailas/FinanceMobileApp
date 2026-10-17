@@ -24,7 +24,7 @@ struct AddTransactionView: View {
                     Spacer()
                     TextField("0", text: $vm.amount)
                         .textFieldStyle(.roundedBorder)
-                        .keyboardType(.numberPad)
+                        .keyboardType(.decimalPad)
                         .frame(width: 150.0)
                 }
                 .padding(12.0)
@@ -74,7 +74,8 @@ struct AddTransactionView: View {
                 guard let amount = Double(vm.amount) else { return }
                 database.createTransaction(
                     amount: amount,
-                    date: .now,
+                    date: Date().addingTimeInterval(30 * 24 * 60 * 60 * -1),
+//                    date: .now,
                     type: vm.selectedTransferType,
                     accountName: vm.selectedAccount,
                     note: vm.note
