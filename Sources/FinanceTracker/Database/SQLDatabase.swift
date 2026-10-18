@@ -129,7 +129,7 @@ import Foundation
         }
     }
     
-    /// Read all the items from the database, storing them in the observable `items` property
+    // MARK: Reload current month list and analytics dashboard in Home Screen
     func readItems() throws {
         guard let context else { return }
         
@@ -137,19 +137,27 @@ import Foundation
         guard let interval = calendar.dateInterval(of: .month, for: now) else {
             return
         }
-        
+
+        let startTimestamp = interval.start.timeIntervalSince1970
+        let endTimestamp = interval.end.timeIntervalSince1970
+
         let predicate = TransactionItem.date
-            .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+            .greaterThanOrEqual(SQLValue(startTimestamp))
             .and(
                 TransactionItem.date
-                    .lessThanOrEqual(SQLValue(interval.end.timeIntervalSince1970))
+                    .lessThan(SQLValue(endTimestamp))
             )
-        
+              
+        // For October 2026, the interval is conceptually:
+        //
+        // Start: October 1, 2026, at 00:00:00 — included.
+        // End: November 1, 2026, at 00:00:00 — excluded.
         self.transactionItem = try context.query(TransactionItem.self)
             .where(predicate)
             .orderBy(TransactionItem.date, order: .descending)
             .eval()
             .load()
+
     }
     
 //    let predicate = TransactionItem.date
@@ -172,6 +180,61 @@ import Foundation
         let year = calendar.component(.year, from: date)
         let combo: Int64 = Int64("\(month)\(year)") ?? 0
         return combo
+    }
+    
+    
+    private func doMonthlyTransactionMagic(for item: TransactionItem) {
+        guard let context else { return }
+        do {
+            let analyticsItem: [AnalyticsItem] = try context.query(AnalyticsItem.self)
+                .eval()
+                .load()
+            
+            let combo = getMonthYearCombo(for: item.date)
+            if ( analyticsItem.count < 1 ) {
+                print("[~] Empty analytics")
+                var newItem = AnalyticsItem(id: 1, amount: 0, expense: 0, credit: 0, monthYearCombo: combo)
+                switch item.type {
+                case TransactionType.credit.rawValue:
+                    newItem.credit = item.amount
+                    newItem.amount = item.amount
+                case TransactionType.debit.rawValue:
+                    newItem.expense = item.amount
+                    newItem.amount = (-1 * item.amount)
+                default:
+                    fatalError("unknown type")
+                }
+                try context.insert(newItem)
+            } else {
+                print("[~] Eureka!!")
+                guard var firstRow = analyticsItem.first else {
+                    fatalError("AnalyticsItem is not empty and unable get first element")
+                }
+                
+                // check if now is different month
+                if firstRow.monthYearCombo != combo {
+                    firstRow.credit = 0
+                    firstRow.expense = 0
+                    firstRow.monthYearCombo = combo
+                }
+                switch item.type {
+                case TransactionType.credit.rawValue:
+                    firstRow.credit += item.amount
+                    firstRow.amount += item.amount
+                case TransactionType.debit.rawValue:
+                    firstRow.expense += item.amount
+                    firstRow.amount -= item.amount
+//                    case TransactionType.transfer.rawValue:
+//                        break
+                default:
+                    fatalError("unknown type")
+                }
+                try context.update(firstRow)
+            }
+        } catch let exp {
+            print("[~] exp: \(exp)")
+        }
+
     }
     
     public func createTransaction(
@@ -203,57 +266,8 @@ import Foundation
             // MARK: Update respective value
             // MARK: Update SQLite
             
-            do {
-                let analyticsItem: [AnalyticsItem] = try context.query(AnalyticsItem.self)
-                    .eval()
-                    .load()
-                
-                let combo = getMonthYearCombo(for: date)
-                if ( analyticsItem.count < 1 ) {
-                    print("[~] Empty analytics")
-                    var item = AnalyticsItem(id: 1, amount: 0, expense: 0, credit: 0, monthYearCombo: combo)
-                    switch type {
-                    case TransactionType.credit.rawValue:
-                        item.credit = amount
-                        item.amount = amount
-                    case TransactionType.debit.rawValue:
-                        item.expense = amount
-                        item.amount = (-1 * amount)
-//                    case TransactionType.transfer.rawValue:
-//                        break
-                    default:
-                        fatalError("unknown type")
-                    }
-                    try context.insert(item)
-                } else {
-                    print("[~] Eureka!!")
-                    guard var firstRow = analyticsItem.first else {
-                        fatalError("AnalyticsItem is not empty and unable get first element")
-                    }
-                    
-                    // check if now is different month
-                    if firstRow.monthYearCombo != combo {
-                        firstRow.credit = 0
-                        firstRow.expense = 0
-                        firstRow.monthYearCombo = combo
-                    }
-                    switch type {
-                    case TransactionType.credit.rawValue:
-                        firstRow.credit += amount
-                        firstRow.amount += amount
-                    case TransactionType.debit.rawValue:
-                        firstRow.expense += amount
-                        firstRow.amount -= amount
-//                    case TransactionType.transfer.rawValue:
-//                        break
-                    default:
-                        fatalError("unknown type")
-                    }
-                    try context.update(firstRow)
-                }
-            } catch let exp {
-                print("[~] exp: \(exp)")
-            }
+            doMonthlyTransactionMagic(for: item)
+            
         }
     }
     

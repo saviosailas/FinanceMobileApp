@@ -59,6 +59,7 @@ struct HistoryView: View {
             }
             .task {
                 if database.historyTransactions.isEmpty {
+                    await Task.yield()
                     try? database.refreshMonthlyTransaction()
                 }
             }

@@ -36,4 +36,6 @@ enum AccountType: String, CaseIterable {
     
     var note: String = ""
     
+    var date: Date = Date.now
+    
 }
