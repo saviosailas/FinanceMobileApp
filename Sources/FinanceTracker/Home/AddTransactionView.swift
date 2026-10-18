@@ -73,7 +73,7 @@ struct AddTransactionView: View {
             
             Button {
                 guard let amount = Double(vm.amount) else { return }
-                database.createTransaction(
+                database.addTransaction(
                     amount: amount,
                     date: vm.date,
 //                    date: vm.date.addingTimeInterval(30 * 24 * 60 * 60 * -1), // for DEBUG

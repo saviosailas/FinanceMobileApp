@@ -78,16 +78,7 @@ struct HomeMainCardView: View {
             isExpanded.toggle()
         }
         .padding()
-        .task {
-            database.refreshCurrentMonthAnalytics()
-        }
     }
-    
-//    private func refreshData() async {
-//        balance = await DatabaseManager.shared.fetchTotalBalance()
-//        monthlySpend = await DatabaseManager.shared.fetchMonthlySpend()
-//        monthlyIncome = await DatabaseManager.shared.fetchMonthlyIncome()
-//    }
     
     private func formatNumber(_ number: Double) -> String {
         let formatter = NumberFormatter()

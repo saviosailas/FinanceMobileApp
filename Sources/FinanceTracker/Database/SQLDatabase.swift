@@ -13,19 +13,17 @@ import Foundation
 @Observable public class SQLDatabase {
     
     private let context: SQLContext?
-    
-    // MARK: Education
-    
+        
     public var transactionItem: [TransactionItem] = []
     
     public var selectedDate: Date = Date()// history view
     public var historyTransactions: [TransactionItem] = []
+    public var historyAnalytics: AnalyticsItem?
     
     public var balance: Double = 0.0
-    
     public var thisMonthExpense: Double = 0.0
-    
     public var thisMonthCredit: Double = 0.0
+    
     
     private var calendar: Calendar = Calendar.current
     
@@ -50,25 +48,8 @@ import Foundation
         context = nil
     }
     
-    nonisolated func refreshMonthlyTransaction() throws {
-        guard let context else { return }
-        guard let interval = calendar.dateInterval(of: .month, for: selectedDate) else {
-            return
-        }
-        let predicate = TransactionItem.date
-            .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
-            .and(
-                TransactionItem.date
-                    .lessThanOrEqual(SQLValue(interval.end.timeIntervalSince1970))
-            )
-        
-        self.historyTransactions = try context.query(TransactionItem.self)
-            .where(predicate)
-            .orderBy(TransactionItem.date, order: .descending)
-            .eval()
-            .load()
-    }
     
+    // MARK: Database migration
     private func createOrMigrateSchema() throws {
         
         guard let context else { return }
@@ -103,18 +84,25 @@ import Foundation
         
         if context.userVersion < 3 {
             // future schema migrations go here…
-            for ddl in AnalyticsItem.table.createTableSQL(ifNotExists: true, columns: [AnalyticsItem.id, AnalyticsItem.amount, AnalyticsItem.expense, AnalyticsItem.credit]) {
+            for ddl in AnalyticsItem.table.createTableSQL(ifNotExists: true, columns: [AnalyticsItem.monthYearCombo, AnalyticsItem.amount, AnalyticsItem.expense, AnalyticsItem.credit]) {
                 try context.exec(ddl)
             }
             context.userVersion = 3
         }
         
         if context.userVersion < 4 {
-            for ddl in AnalyticsItem.table.addColumnSQL(column: AnalyticsItem.monthYearCombo) {
+//            for ddl in AnalyticsItem.table.addColumnSQL(column: AnalyticsItem.monthYearCombo) {
+//                try context.exec(ddl)
+//            }
+//            
+//            context.userVersion = 4
+        }
+        
+        if context.userVersion < 5 {
+            for ddl in TotalBalanceItem.table.createTableSQL(ifNotExists: true, columns: [TotalBalanceItem.id, TotalBalanceItem.amount]) {
                 try context.exec(ddl)
             }
-            
-            context.userVersion = 4
+            context.userVersion = 5
         }
     }
     
@@ -157,23 +145,44 @@ import Foundation
             .orderBy(TransactionItem.date, order: .descending)
             .eval()
             .load()
+        
+        refreshCurrentMonthAnalytics()
+        
+        
+        balance = try context.query(TotalBalanceItem.self)
+            .eval()
+            .load(count: 1)
+            .first?.amount ?? 0.0
 
     }
     
-//    let predicate = TransactionItem.date
-    ///                .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
-    ///               .and(
-    ///                    TransactionItem.date.lessThan(
-    ///                        SQLValue(interval.end.timeIntervalSince1970)
-    ///                    )
-    ///                )
-    ///
-    ///            let transactions = try context.query(TransactionItem.self)
-    ///                .where(predicate)
-    ///                .orderBy(TransactionItem.date, order: .descending)
-    ///                .eval()
-    ///                .load()
-    
+    nonisolated func refreshMonthlyTransaction() throws {
+        guard let context else { return }
+        guard let interval = calendar.dateInterval(of: .month, for: selectedDate) else {
+            return
+        }
+        let predicate = TransactionItem.date
+            .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+            .and(
+                TransactionItem.date
+                    .lessThan(SQLValue(interval.end.timeIntervalSince1970))
+            )
+        
+        self.historyTransactions = try context.query(TransactionItem.self)
+            .where(predicate)
+            .orderBy(TransactionItem.date, order: .descending)
+            .eval()
+            .load()
+        
+        let analyticsPredicate = AnalyticsItem.monthYearCombo
+            .equals(SQLValue( getMonthYearCombo(for: selectedDate) ))
+        
+        self.historyAnalytics = try context.query(AnalyticsItem.self)
+            .where(analyticsPredicate)
+            .eval()
+            .load()
+            .first
+    }
     
     public func getMonthYearCombo(for date: Date) -> Int64 {
         let month = calendar.component(.month, from: date)
@@ -186,14 +195,19 @@ import Foundation
     private func doMonthlyTransactionMagic(for item: TransactionItem) {
         guard let context else { return }
         do {
+            let combo = getMonthYearCombo(for: item.date)
+            let monthlyAnalyticsPredicate = AnalyticsItem.monthYearCombo
+                .equals(SQLValue(combo))
+            
             let analyticsItem: [AnalyticsItem] = try context.query(AnalyticsItem.self)
+                .where(monthlyAnalyticsPredicate)
                 .eval()
                 .load()
             
-            let combo = getMonthYearCombo(for: item.date)
+            // If that montly analytics does not exist
             if ( analyticsItem.count < 1 ) {
                 print("[~] Empty analytics")
-                var newItem = AnalyticsItem(id: 1, amount: 0, expense: 0, credit: 0, monthYearCombo: combo)
+                var newItem = AnalyticsItem(amount: 0, expense: 0, credit: 0, monthYearCombo: combo)
                 switch item.type {
                 case TransactionType.credit.rawValue:
                     newItem.credit = item.amount
@@ -211,12 +225,6 @@ import Foundation
                     fatalError("AnalyticsItem is not empty and unable get first element")
                 }
                 
-                // check if now is different month
-                if firstRow.monthYearCombo != combo {
-                    firstRow.credit = 0
-                    firstRow.expense = 0
-                    firstRow.monthYearCombo = combo
-                }
                 switch item.type {
                 case TransactionType.credit.rawValue:
                     firstRow.credit += item.amount
@@ -224,8 +232,6 @@ import Foundation
                 case TransactionType.debit.rawValue:
                     firstRow.expense += item.amount
                     firstRow.amount -= item.amount
-//                    case TransactionType.transfer.rawValue:
-//                        break
                 default:
                     fatalError("unknown type")
                 }
@@ -237,7 +243,7 @@ import Foundation
 
     }
     
-    public func createTransaction(
+    public func addTransaction(
         amount: Double,
         date: Date,
         type: String,
@@ -261,13 +267,38 @@ import Foundation
             } catch {
                 print("[~] failed: \(error)")
             }
-            
-            // MARK: Read the AnalyticsItem
-            // MARK: Update respective value
-            // MARK: Update SQLite
-            
             doMonthlyTransactionMagic(for: item)
             
+            var isUpdate: Bool = false
+            var totalChanges: TotalBalanceItem = TotalBalanceItem(id: 0, amount: 0)
+
+            let total = try context.query(TotalBalanceItem.self)
+                .eval()
+                .load(count: 1)
+            
+            if let totalAmountItem = total.first {
+                totalChanges = totalAmountItem
+                isUpdate = true
+            }
+            
+            switch item.type {
+            case TransactionType.credit.rawValue:
+                totalChanges.amount += amount
+            case TransactionType.debit.rawValue:
+                totalChanges.amount -= amount
+            default:
+                fatalError("unknown type")
+            }
+            
+            do {
+                if isUpdate {
+                    try context.update(totalChanges)
+                } else {
+                    try context.insert(totalChanges)
+                }
+            } catch {
+                print(error)
+            }
         }
     }
     
@@ -282,45 +313,63 @@ import Foundation
     
     public func refreshCurrentMonthAnalytics() {
         guard let context else { return }
-        reloading {
-            
+        do {
             let analyticsItem = try context.query(AnalyticsItem.self)
                 .limit(1)
                 .eval()
                 .load()
-            
-            print("[~] analytics = \(analyticsItem)")
-            
+                
             thisMonthCredit = analyticsItem.first?.credit ?? 0.0
             thisMonthExpense = analyticsItem.first?.expense ?? 0.0
-            balance = analyticsItem.first?.amount ?? 0.0
-            
-            return
-            
-            ///            let predicate = TransactionItem.date
-            ///                .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
-            ///               .and(
-            ///                    TransactionItem.date.lessThan(
-            ///                        SQLValue(interval.end.timeIntervalSince1970)
-            ///                    )
-            ///                )
-            ///
-            ///            let transactions = try context.query(TransactionItem.self)
-            ///                .where(predicate)
-            ///                .orderBy(TransactionItem.date, order: .descending)
-            ///                .eval()
-            ///                .load()
-            ///
-            ///
-            ///            let pred = [
-            ///                TransactionItem.type.equals(
-            ///                    SQLValue(TransactionType.credit.rawValue)
-            ///                ),
-            ///                TransactionItem.type.equals(
-            ///                    SQLValue(TransactionType.debit.rawValue)
-            ///                )
-            ///            ]
-            
+        } catch {
+            print(error)
         }
     }
+    
 }
+
+
+
+///            let predicate = TransactionItem.date
+///                .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+///               .and(
+///                    TransactionItem.date.lessThan(
+///                        SQLValue(interval.end.timeIntervalSince1970)
+///                    )
+///                )
+///
+///            let transactions = try context.query(TransactionItem.self)
+///                .where(predicate)
+///                .orderBy(TransactionItem.date, order: .descending)
+///                .eval()
+///                .load()
+///
+///
+///            let pred = [
+///                TransactionItem.type.equals(
+///                    SQLValue(TransactionType.credit.rawValue)
+///                ),
+///                TransactionItem.type.equals(
+///                    SQLValue(TransactionType.debit.rawValue)
+///                )
+///            ]
+///
+///
+///
+///
+
+
+
+///    let predicate = TransactionItem.date
+    ///                .greaterThanOrEqual(SQLValue(interval.start.timeIntervalSince1970))
+    ///               .and(
+    ///                    TransactionItem.date.lessThan(
+    ///                        SQLValue(interval.end.timeIntervalSince1970)
+    ///                    )
+    ///                )
+    ///
+    ///            let transactions = try context.query(TransactionItem.self)
+    ///                .where(predicate)
+    ///                .orderBy(TransactionItem.date, order: .descending)
+    ///                .eval()
+    ///                .load()
