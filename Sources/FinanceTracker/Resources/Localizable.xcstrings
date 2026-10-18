@@ -4,13 +4,10 @@
     "" : {
 
     },
+    "%lf" : {
+
+    },
     "0" : {
-
-    },
-    "52,021" : {
-
-    },
-    "About" : {
 
     },
     "Account" : {
@@ -76,6 +73,9 @@
     "Money" : {
 
     },
+    "more info" : {
+
+    },
     "Name" : {
 
     },
@@ -86,9 +86,6 @@
 
     },
     "optional note" : {
-
-    },
-    "Overview" : {
 
     },
     "Spend this month" : {

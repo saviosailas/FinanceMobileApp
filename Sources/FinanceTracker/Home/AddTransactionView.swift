@@ -34,7 +34,6 @@ struct AddTransactionView: View {
             }
             
             Label {
-                
                 Picker(selection: $vm.selectedAccount) {
                     ForEach(vm.accountTypes, id: \.self) {
                         Text($0)
@@ -49,7 +48,6 @@ struct AddTransactionView: View {
                 Text("Account")
                     .font(.title2)
             }
-            //            .labelStyle(.titleOnly)
             
             Label {
                 Picker(selection: $vm.selectedTransferType) {
@@ -67,31 +65,28 @@ struct AddTransactionView: View {
                     .font(.title2)
             }
             .labelStyle(.titleOnly)
+            
             TextField("", text: $vm.note, prompt: Text("optional note"))
                 .padding(.vertical)
+
+            DatePicker(selection: $vm.date) { }
+            
             Button {
-                //                Task {
                 guard let amount = Double(vm.amount) else { return }
-                database.createTransaction(
+                database.addTransaction(
                     amount: amount,
-                    date: Date().addingTimeInterval(30 * 24 * 60 * 60 * -1),
-//                    date: .now,
+                    date: vm.date,
+//                    date: vm.date.addingTimeInterval(30 * 24 * 60 * 60 * -1), // for DEBUG
                     type: vm.selectedTransferType,
                     accountName: vm.selectedAccount,
                     note: vm.note
                 )
-                //                    await vm.addButtonAction()
                 vm.amount = ""
                 Task.detached {
                     await MainActor.run {
                         dismiss()
                     }
                 }
-                
-                
-                // MARK: GO BACK
-                
-                //                }
             } label: {
                 Text("Add new")
                     .font(.title2)

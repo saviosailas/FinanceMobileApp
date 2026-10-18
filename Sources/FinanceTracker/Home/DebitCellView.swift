@@ -36,7 +36,7 @@ struct DebitCellView: View {
             // --- Header Section (Stationary) ---
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .center, spacing: 0.0) {
-                    Text(amount.description)
+                    Text(formatNumber(amount))
                         .font(.title)
                         .foregroundStyle(
                             getTextColor(for: type)
@@ -98,5 +98,13 @@ struct DebitCellView: View {
         }
         // 4. External Padding: Space between the card and the screen/list edges
         .padding(.horizontal, 10.0)
+    }
+    
+    
+    private func formatNumber(_ number: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+//        formatter.groupingStyle = .defaultGrouping
+        return formatter.string(from: NSNumber(value: number)) ?? "0"
     }
 }

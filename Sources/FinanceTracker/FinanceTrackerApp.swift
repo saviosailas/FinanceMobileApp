@@ -37,7 +37,7 @@ public struct FinanceTrackerRootView : View {
                 .environment(database)
                 .tabItem { Label("", systemImage: "calendar") }
                 .tag(Tabs.history)
-            Text("About")
+            AboutView()
                 .tabItem { Label("", systemImage: "heart.fill") }
                 .tag(Tabs.about)
         }

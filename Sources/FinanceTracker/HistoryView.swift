@@ -30,23 +30,25 @@ struct HistoryView: View {
                 }
             }
             Divider()
-            DisclosureGroup("Overview", isExpanded: $expanded) {
+
+            DisclosureGroup("more info", isExpanded: $expanded) {
                 HStack {
                     Text("Expense:")
                     Spacer()
-                    Text("52,021")
+                    Text("\(database.historyAnalytics?.expense ?? 0.0)")
                 }
                 HStack {
                     Text("Income:")
                     Spacer()
-                    Text("52,021")
+                    Text("\(database.historyAnalytics?.credit ?? 0.0)")
                 }
                 HStack {
                     Text("Closing balance:")
                     Spacer()
-                    Text("52,021")
+                    Text("\(database.historyAnalytics?.amount ?? 0.0)")
                 }
             }
+            .padding(.horizontal)
             DatePicker(selection: $database.selectedDate, displayedComponents: .date) {
                 Text("Choose the month and Year")
             }
@@ -59,6 +61,7 @@ struct HistoryView: View {
             }
             .task {
                 if database.historyTransactions.isEmpty {
+                    await Task.yield()
                     try? database.refreshMonthlyTransaction()
                 }
             }
