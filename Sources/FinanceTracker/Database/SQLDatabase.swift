@@ -314,8 +314,10 @@ import Foundation
     public func refreshCurrentMonthAnalytics() {
         guard let context else { return }
         do {
+            let predicate = AnalyticsItem.monthYearCombo
+                .equals(SQLValue(getMonthYearCombo(for: Date.now)))
             let analyticsItem = try context.query(AnalyticsItem.self)
-                .limit(1)
+                .where(predicate)
                 .eval()
                 .load()
                 
