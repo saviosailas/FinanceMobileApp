@@ -10,14 +10,14 @@ import SwiftUI
 struct AddTransactionView: View {
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(SQLDatabase.self) var database
     
     @State var vm: AddTransactionViewModel = .init()
     
-    @Environment(SQLDatabase.self) var database
+    @FocusState var focusBool: Bool
     
     var body: some View {
-        VStack(alignment: .center, spacing: 12.0) {
-            
+        ScrollView(.vertical, showsIndicators: false) {
             Label {
                 HStack {
                     Text("")
@@ -25,6 +25,7 @@ struct AddTransactionView: View {
                     TextField("0", text: $vm.amount)
                         .textFieldStyle(.roundedBorder)
                         .keyboardType(.decimalPad)
+                        .focused($focusBool)
                         .frame(width: 150.0)
                 }
                 .padding(12.0)
@@ -39,6 +40,7 @@ struct AddTransactionView: View {
                         Text($0)
                             .font(.title2)
                             .padding(12.0)
+                            .foregroundStyle(Color.blue)
                     }
                 } label: {
                     Text("")
@@ -60,6 +62,13 @@ struct AddTransactionView: View {
                     Text("")
                 }
                 .pickerStyle(.segmented)
+//                #if SKIP
+//                .material3SegmentedButton {
+//                    $0.copy(icon: {})
+//                }
+//                #else
+//                .pickerStyle(.palette)
+//                #endif
             } icon: {
                 Text("Credit / Debit")
                     .font(.title2)
@@ -68,7 +77,7 @@ struct AddTransactionView: View {
             
             TextField("", text: $vm.note, prompt: Text("optional note"))
                 .padding(.vertical)
-
+            
             DatePicker(selection: $vm.date) { }
             
             Button {
@@ -76,7 +85,7 @@ struct AddTransactionView: View {
                 database.addTransaction(
                     amount: amount,
                     date: vm.date,
-//                    date: vm.date.addingTimeInterval(30 * 24 * 60 * 60 * -1), // for DEBUG
+                    //                    date: vm.date.addingTimeInterval(30 * 24 * 60 * 60 * -1), // for DEBUG
                     type: vm.selectedTransferType,
                     accountName: vm.selectedAccount,
                     note: vm.note
@@ -113,6 +122,11 @@ struct AddTransactionView: View {
             
         }
         .padding()
+        .onAppear {
+            if vm.amount.isEmpty {
+                focusBool = true
+            }
+        }
     }
 }
 
