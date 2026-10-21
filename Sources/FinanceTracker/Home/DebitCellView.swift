@@ -18,6 +18,8 @@ struct DebitCellView: View {
     var date: Date
     var note: String
     
+    let onDelete: (() -> Void)
+
     func getTextColor(for type: String) -> Color {
         let x = TransactionType(rawValue: type)
         return switch x {
@@ -47,7 +49,9 @@ struct DebitCellView: View {
     
     @ViewBuilder var deleteView: some View {
         if showDelete {
-            Button(action: {}) {
+            Button(action: {
+                onDelete()
+            }) {
                 Image(systemName: "trash.fill")
                     .resizable()
                     .aspectRatio(contentMode: .fit)

@@ -48,6 +48,71 @@ import Foundation
         context = nil
     }
     
+    // MARK: Delete
+    
+    public func deleteTransaction(_ item: TransactionItem) {
+        guard let context else { return }
+        reloading {
+            try context.delete(instances: [item])
+            reverseMonthlyAnalytics(for: item)
+            reverseTotalBalance(for: item)
+        }
+    }
+    
+    public func reverseMonthlyAnalytics(for item: TransactionItem) {
+        guard let context else { return }
+        do {
+            let combo = getMonthYearCombo(for: item.date)
+            let predicate = AnalyticsItem.monthYearCombo
+                .equals(SQLValue(combo))
+            
+            let analyticsItem = try context.query(AnalyticsItem.self)
+                .where(predicate)
+                .eval()
+                .load()
+            
+            guard var analytics = analyticsItem.first else {
+                return
+            }
+            
+            switch item.type {
+            case TransactionType.credit.rawValue:
+                analytics.credit -= item.amount
+                analytics.amount -= item.amount
+            case TransactionType.debit.rawValue:
+                analytics.expense -= item.amount
+                analytics.amount += item.amount // debit was -ve, so add it
+            default:
+                return
+            }
+            try context.update(analytics)
+        } catch { }
+    }
+    
+    public func reverseTotalBalance(for item: TransactionItem) {
+        guard let context else { return }
+        do {
+            let total = try context.query(TotalBalanceItem.self)
+                .eval()
+                .load(count: 1)
+            
+            guard var totalBalance = total.first else {
+                return
+            }
+            
+            switch item.type {
+            case TransactionType.credit.rawValue:
+                totalBalance.amount -= item.amount
+            case TransactionType.debit.rawValue:
+                totalBalance.amount += item.amount // debit was -ve, so add it
+            default:
+                return
+            }
+            try context.update(totalBalance)
+        } catch { }
+        
+        
+    }
     
     // MARK: Database migration
     private func createOrMigrateSchema() throws {

@@ -24,7 +24,11 @@ struct HistoryView: View {
                         account: item.accountName,
                         type: item.type,
                         date: item.date,
-                        note: item.note
+                        note: item.note,
+                        onDelete: {
+                            database.deleteTransaction(item)
+                            try? database.refreshMonthlyTransaction()
+                        }
                     )
                     .padding(.bottom, 5.0)
                 }
