@@ -10,6 +10,7 @@ import SwiftUI
 struct DebitCellView: View {
     
     @State var showDetails: Bool = false
+    @State var showDelete: Bool = false
     
     var amount: Double
     var account: String
@@ -22,63 +23,55 @@ struct DebitCellView: View {
         return switch x {
         case .debit:
             Color.red
-//        case .transfer:
-//            Color.blue
+            //        case .transfer:
+            //            Color.blue
         case .credit, nil:
             Color.primary
         }
     }
     
     var body: some View {
+        HStack(spacing: 0.0) {
+            mainCardView
+            deleteView
+        }
+        .gesture(
+            DragGesture()
+                .onEnded { _ in
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        showDelete.toggle()
+                    }
+                }
+        )
+    }
+    
+    @ViewBuilder var deleteView: some View {
+        if showDelete {
+            Button(action: {}) {
+                Image(systemName: "trash.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundStyle(Color.red)
+                    .frame(maxWidth: 20.0)
+                    .padding()
+            }
+        }
+    }
+    
+    @ViewBuilder var mainCardView: some View {
         // 1. The main container that holds the background and border
         VStack(alignment: .leading, spacing: 0) {
             
             // --- Header Section (Stationary) ---
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .center, spacing: 0.0) {
-                    Text(formatNumber(amount))
-                        .font(.title)
-                        .foregroundStyle(
-                            getTextColor(for: type)
-                        )
-                    
-                    Spacer()
-                    
-                    Text(account)
-                        .font(.callout)
-                        .foregroundStyle(Color.primary)
-                }
-                
-                HStack(alignment: .bottom, spacing: 0.0) {
-                    Spacer()
-                    
-                    Text(date.formatted(date: .abbreviated, time: .omitted))
-                        .font(.caption2)
-                        .foregroundStyle(Color.gray)
-                }
-            }
-            .padding(.bottom, 8) // Space between header and the expanding details
+            headerSectionView
+                .padding(.bottom, 8) // Space between header and the expanding details
             
             // --- Details Section (Expands downwards) ---
-            if showDetails {
-                HStack(alignment: .bottom, spacing: 0.0) {
-                    Text(note)
-                    
-                    Spacer()
-                    
-                    Text(date.formatted(date: .omitted, time: .shortened))
-                        .font(.caption2)
-                        .foregroundStyle(Color.black)
-                }
-                // This transition makes it slide down from the header instead of just appearing
-                .transition(.asymmetric(
-                    insertion: .move(edge: .top).combined(with: .opacity),
-                    removal: .opacity
-                ))
-            }
+            expandedView
         }
         // 2. Content Padding: Space between the card edges and the text
-        .padding(.horizontal, 15.0)
+        .padding(.leading, 15.0)
+        .padding(.trailing, showDelete ? 4.0 : 15.0)
         .padding(.vertical, 12.0)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
@@ -100,11 +93,55 @@ struct DebitCellView: View {
         .padding(.horizontal, 10.0)
     }
     
+    @ViewBuilder private var headerSectionView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center, spacing: 0.0) {
+                Text(formatNumber(amount))
+                    .font(.title)
+                    .foregroundStyle(
+                        getTextColor(for: type)
+                    )
+                
+                Spacer()
+                
+                Text(account)
+                    .font(.callout)
+                    .foregroundStyle(Color.primary)
+            }
+            
+            HStack(alignment: .bottom, spacing: 0.0) {
+                Spacer()
+                
+                Text(date.formatted(date: .abbreviated, time: .omitted))
+                    .font(.caption2)
+                    .foregroundStyle(Color.gray)
+            }
+        }
+    }
+    
+    @ViewBuilder var expandedView: some View {
+        if showDetails {
+            HStack(alignment: .bottom, spacing: 0.0) {
+                Text(note)
+                
+                Spacer()
+                
+                Text(date.formatted(date: .omitted, time: .shortened))
+                    .font(.caption2)
+                    .foregroundStyle(Color.black)
+            }
+            // This transition makes it slide down from the header instead of just appearing
+            .transition(.asymmetric(
+                insertion: .move(edge: .top).combined(with: .opacity),
+                removal: .opacity
+            ))
+        }
+    }
     
     private func formatNumber(_ number: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-//        formatter.groupingStyle = .defaultGrouping
+        //        formatter.groupingStyle = .defaultGrouping
         return formatter.string(from: NSNumber(value: number)) ?? "0"
     }
 }
