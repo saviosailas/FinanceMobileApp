@@ -24,28 +24,32 @@ struct HistoryView: View {
                         account: item.accountName,
                         type: item.type,
                         date: item.date,
-                        note: item.note
+                        note: item.note,
+                        onDelete: {
+                            database.deleteTransaction(item)
+                            try? database.refreshMonthlyTransaction()
+                        }
                     )
                     .padding(.bottom, 5.0)
                 }
             }
             Divider()
-
+            
             DisclosureGroup("more info", isExpanded: $expanded) {
                 HStack {
                     Text("Expense:")
                     Spacer()
-                    Text("\(database.historyAnalytics?.expense ?? 0.0)")
+                    Text(formatNumber(database.historyAnalytics?.expense))
                 }
                 HStack {
                     Text("Income:")
                     Spacer()
-                    Text("\(database.historyAnalytics?.credit ?? 0.0)")
+                    Text(formatNumber(database.historyAnalytics?.credit))
                 }
                 HStack {
                     Text("Closing balance:")
                     Spacer()
-                    Text("\(database.historyAnalytics?.amount ?? 0.0)")
+                    Text(formatNumber(database.historyAnalytics?.amount))
                 }
             }
             .padding(.horizontal)
@@ -60,12 +64,20 @@ struct HistoryView: View {
                 }
             }
             .task {
-                if database.historyTransactions.isEmpty {
-                    await Task.yield()
-                    try? database.refreshMonthlyTransaction()
-                }
+                await Task.yield()
+                try? database.refreshMonthlyTransaction()
             }
         }
+    }
+    
+    private func formatNumber(_ number: Double?) -> String {
+        guard let number else {
+            return "0"
+        }
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        //        formatter.groupingStyle = .defaultGrouping
+        return formatter.string(from: NSNumber(value: number)) ?? "0"
     }
 }
 

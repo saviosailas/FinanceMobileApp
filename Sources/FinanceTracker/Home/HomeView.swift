@@ -55,12 +55,12 @@ struct HomeView: View {
                                     account: item.accountName,
                                     type: item.type,
                                     date: item.date,
-                                    note: item.note
+                                    note: item.note,
+                                    onDelete: {
+                                        database.deleteTransaction(item)
+                                    }
                                 )
                                 .padding(.bottom, 5.0)
-                            }
-                            .onDelete { indices in
-                                database.deleteItems(atOffsets: Array(indices))
                             }
                             
                         }
